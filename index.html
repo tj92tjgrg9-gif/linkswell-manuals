@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radio Install Manuals</title>
+<style>
+  :root {
+    --bg: #F5F6F8;
+    --surface: #FFFFFF;
+    --text: #1B2330;
+    --muted: #5B6575;
+    --border: #E2E5EA;
+    --accent: #1D4ED8;
+    --accent-soft: #E8EEFC;
+    --bar: #1B2330;
+    --bar-text: #FFFFFF;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0F141B;
+      --surface: #18202B;
+      --text: #E6E9EE;
+      --muted: #9AA4B2;
+      --border: #2A3442;
+      --accent: #6E95F5;
+      --accent-soft: #1E2A44;
+      --bar: #0A0E13;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.45;
+  }
+  header {
+    background: var(--bar);
+    color: var(--bar-text);
+    padding: 28px 16px 24px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  h1 { margin: 0 0 4px; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
+  header p { margin: 0; opacity: .75; }
+
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    padding: 20px 16px 4px;
+  }
+  .search {
+    flex: 1 1 260px;
+    padding: 11px 14px;
+    font: inherit;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font: inherit; font-size: .875rem;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  main { padding: 8px 16px 48px; }
+  section { margin-top: 28px; }
+  section h2 { font-size: 1.1rem; margin: 0 0 2px; }
+  section .sub { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .card h3 { margin: 0; font-size: 1rem; font-weight: 600; }
+  .card .meta { color: var(--muted); font-size: .85rem; }
+  .actions { display: flex; gap: 8px; margin-top: auto; }
+  .btn {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    font-size: .9rem; font-weight: 600;
+    padding: 8px 10px;
+    border-radius: 7px;
+    border: 1px solid var(--accent);
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.ghost { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
+  .btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .empty { color: var(--muted); padding: 32px 0; text-align: center; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Radio Install Manuals</h1>
+    <p id="count">25 manuals for LinksWell radios and camera interfaces</p>
+  </div>
+</header>
+
+<div class="wrap controls">
+  <input class="search" id="q" type="search" placeholder="Search by vehicle, e.g. F150, Tacoma, Ram 2019" aria-label="Search manuals">
+  <div class="chips" id="chips" role="group" aria-label="Filter by product line"></div>
+</div>
+
+<main class="wrap" id="list"></main>
+
+<script>
+  const LINES = [
+    { id: "gen6", name: "Gen 6 T-Style Radio", folder: "gen6-t-style" },
+    { id: "xl",   name: "T-Style XL Radio",    folder: "t-style-xl" },
+    { id: "lite2",name: "Lite 2",              folder: "lite-2" },
+    { id: "gm",   name: "GM Multi-Camera Interface", folder: "gm-i0b" },
+  ];
+
+  // title = vehicle coverage as printed on the manual's cover page
+  const MANUALS = [
+    ["gen6", "2013–2014 Ford F150", "13-14 F150 Gen 6 Radio.pdf", 5.88],
+    ["gen6", "2014–2018 Dodge Ram (12\")", "13-18 Ram 12\" Gen 6 Radio.pdf", 5.91],
+    ["gen6", "2007–2014 Cadillac", "Cadillac Gen 6 Radio.pdf", 5.83],
+    ["gen6", "2019–2020 Ford Expedition", "Expedition Gen 6 Radio.pdf", 5.96],
+    ["gen6", "2015–2020 Ford F150 · 2017–2020 Super Duty", "F-Series Gen 6 Radio.pdf", 5.96],
+    ["gen6", "2014–2019 Jeep Grand Cherokee", "Grand Cherokee Gen 6 Radio.pdf", 6.18],
+    ["gen6", "2018+ Jeep Wrangler · 2020+ Gladiator", "Jeep Wrangler Gen 6 Radio.pdf", 5.90],
+    ["gen6", "2015–2020 Ford Mustang", "Mustang Gen 6 Radio.pdf", 5.98],
+    ["gen6", "2018+ Ford Ranger", "Ranger Gen 6 Radio.pdf", 5.89],
+    ["gen6", "2014–2018 Chevy Silverado", "Silverado Gen 6 Radio.pdf", 6.07],
+    ["gen6", "2016–2023 Toyota Tacoma", "Tacoma Gen 6 Radio.pdf", 7.55],
+    ["gen6", "2014–2020 Toyota Tundra", "Tundra Gen 6 Radio.pdf", 5.93],
+
+    ["xl", "2014–2018 Dodge Ram", "13-18 Ram XL Radio.pdf", 6.96],
+    ["xl", "2019+ Dodge Ram", "19-Up Ram XL Radio.pdf", 6.96],
+    ["xl", "2019–2020 Ford Expedition", "Expedition Xl Radio.pdf", 6.89],
+    ["xl", "2015–2020 Ford F150 · 2017–2020 Super Duty", "F-Series XL Radio.pdf", 6.89],
+    ["xl", "2018+ Jeep Wrangler · 2020+ Gladiator", "Jeep XL Radio.pdf", 7.21],
+    ["xl", "2014–2018 Chevy Silverado", "Silverado T-Style XL.pdf", 6.80],
+
+    ["lite2", "2014–2018 Chevy Silverado / GMC Sierra", "Linkswell-Lite2 14-18-GMC-Manual.pdf", 5.07],
+    ["lite2", "2014–2018 Dodge Ram", "Linkswell-Lite2 18 Ram-Manual.pdf", 4.98],
+    ["lite2", "2019+ Dodge Ram 1500/2500/3500", "Linkswell-Lite2 19 Ram-Manual.pdf", 5.01],
+    ["lite2", "2015–2020 Ford F150 · 2017–2020 Super Duty", "Linkswell-Lite2 F150 Manual.pdf", 5.07],
+    ["lite2", "2015–2020 Ford Mustang", "Linkswell-Lite2 Mustang-Manual.pdf", 5.03],
+    ["lite2", "2014–2023 Toyota Tundra", "Linkswell-Lite2 Tundra-Manual.pdf", 5.06],
+
+    ["gm", "GM i05 / i06 / i0B Multi-Camera Interface", "GM Multi Camera Manual.pdf", 29.29],
+  ].map(([line, title, file, mb]) => ({ line, title, file, mb }));
+
+  const list = document.getElementById("list");
+  const q = document.getElementById("q");
+  const chips = document.getElementById("chips");
+  const count = document.getElementById("count");
+  let activeLine = "all";
+
+  const href = (m) => encodeURI(LINES.find(l => l.id === m.line).folder + "/" + m.file);
+  const esc = (s) => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  [{ id: "all", name: "All" }, ...LINES].forEach(l => {
+    const b = document.createElement("button");
+    b.className = "chip";
+    b.textContent = l.name;
+    b.dataset.line = l.id;
+    b.setAttribute("aria-pressed", l.id === "all");
+    b.onclick = () => {
+      activeLine = l.id;
+      chips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.line === l.id));
+      render();
+    };
+    chips.appendChild(b);
+  });
+
+  function render() {
+    const terms = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+    const matches = (m) => {
+      const hay = (m.title + " " + m.file + " " + LINES.find(l => l.id === m.line).name).toLowerCase();
+      return terms.every(t => hay.includes(t));
+    };
+    let shown = 0;
+    list.innerHTML = LINES
+      .filter(l => activeLine === "all" || activeLine === l.id)
+      .map(l => {
+        const items = MANUALS.filter(m => m.line === l.id && matches(m));
+        if (!items.length) return "";
+        shown += items.length;
+        return `<section>
+          <h2>${esc(l.name)}</h2>
+          <p class="sub">${items.length} manual${items.length > 1 ? "s" : ""}</p>
+          <div class="grid">${items.map(m => `
+            <article class="card">
+              <h3>${esc(m.title)}</h3>
+              <div class="meta">PDF · ${m.mb.toFixed(1)} MB</div>
+              <div class="actions">
+                <a class="btn ghost" href="${href(m)}" target="_blank" rel="noopener">View</a>
+                <a class="btn primary" href="${href(m)}" download>Download</a>
+              </div>
+            </article>`).join("")}
+          </div>
+        </section>`;
+      }).join("") || `<p class="empty">No manuals match “${esc(q.value)}”.</p>`;
+    count.textContent = shown === MANUALS.length
+      ? `${MANUALS.length} manuals for LinksWell radios and camera interfaces`
+      : `Showing ${shown} of ${MANUALS.length} manuals`;
+  }
+
+  q.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
