@@ -110,7 +110,7 @@
 <header>
   <div class="wrap">
     <h1>Radio Install Manuals</h1>
-    <p id="count">25 manuals for LinksWell radios and camera interfaces</p>
+    <p id="count">26 manuals for LinksWell radios and camera interfaces</p>
   </div>
 </header>
 
@@ -127,6 +127,7 @@
     { id: "xl",   name: "T-Style XL Radio",    folder: "t-style-xl" },
     { id: "lite2",name: "Lite 2",              folder: "lite-2" },
     { id: "gm",   name: "GM Multi-Camera Interface", folder: "gm-i0b" },
+    { id: "sync3", name: "Ford SYNC 3 Multi-Camera Interface", folder: "6av" },
   ];
 
   // title = vehicle coverage as printed on the manual's cover page
@@ -159,6 +160,8 @@
     ["lite2", "2014–2023 Toyota Tundra", "Linkswell-Lite2 Tundra-Manual.pdf", 5.06],
 
     ["gm", "GM i05 / i06 / i0B Multi-Camera Interface", "GM Multi Camera Manual.pdf", 29.29],
+
+    ["sync3", "Ford SYNC 3 Multi-Camera Interface (S2H003A-Y02E)", "SYNC 3 Multi Camera Manual.pdf", 9.02],
   ].map(([line, title, file, mb]) => ({ line, title, file, mb }));
 
   const list = document.getElementById("list");
