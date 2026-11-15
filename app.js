@@ -240,9 +240,16 @@ function viewShop(params) {
     textMatch([p.title, lineOf(p.line).name, LINE_FULL[p.line], p.model, p.cat.model, p.bb, p.cat.headline, ...p.fits.map(f => f[0] + " " + f[1])].join(" "),
       y => p.fits.some(f => y >= f[2] && y <= f[3])));
   let radios = baseRadios.filter(p => (!lines.length || lines.includes(p.line)) && (!screens.length || screens.includes(p.screen)) && (!manualOnly || p.manual));
-  if (sort === "screen") radios.sort((a, b) => (+b.screen || 0) - (+a.screen || 0));
-  else if (sort === "year") radios.sort((a, b) => Math.max(...b.fits.map(f => f[3])) - Math.max(...a.fits.map(f => f[3])));
-  else radios.sort((a, b) => LINES.findIndex(l => l.id === a.line) - LINES.findIndex(l => l.id === b.line));
+  // Vehicle order: make, model, first year (universal radios last). Used within each line and to break ties.
+  const byVehicle = (a, b) => {
+    const fa = a.fits[0], fb = b.fits[0];
+    if (!fa || !fb) return !fa - !fb;
+    return fa[0].localeCompare(fb[0]) || fa[1].localeCompare(fb[1]) || fa[2] - fb[2] || a.title.localeCompare(b.title);
+  };
+  const byLine = (a, b) => LINES.findIndex(l => l.id === a.line) - LINES.findIndex(l => l.id === b.line);
+  if (sort === "screen") radios.sort((a, b) => (+b.screen || 0) - (+a.screen || 0) || byLine(a, b) || byVehicle(a, b));
+  else if (sort === "year") radios.sort((a, b) => Math.max(...b.fits.map(f => f[3])) - Math.max(...a.fits.map(f => f[3])) || byLine(a, b) || byVehicle(a, b));
+  else radios.sort((a, b) => byLine(a, b) || byVehicle(a, b));
 
   // accessories that fit this vehicle (via any matching radio)
   const vehRadios = PRODUCTS.filter(p => fitsVehicle(p.fits, v));
