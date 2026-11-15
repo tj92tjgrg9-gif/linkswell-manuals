@@ -1,4 +1,4 @@
-// Linkswell install guide: hash-routed store-style UI over data.js + catalog.js.
+// Linkswell Product Information: hash-routed store-style UI over data.js + catalog.js.
 // Routes: #/  ·  #/shop?make=&model=&year=&cat=&line=&screen=&manual=&q=&sort=  ·  #/p/<slug>  ·  #/a/<sku>  ·  #/support
 
 const LINE_FULL = { xl: "T-Style XL Radio", gen6: "Gen 6 T-Style Radio", lite2: "T-Style Lite 2 Radio" };
@@ -176,7 +176,7 @@ function sectionNav(items) {
 const app = () => $("#app");
 
 function viewHome() {
-  document.title = "Linkswell Radio Install Guides";
+  document.title = "Linkswell Product Information";
   const v = { make: "", model: "", year: "" };
   const lineImg = { xl: "2015-2020-ford-f-150-2017-2022-super-duty-t-style-xl", gen6: "2015-2020-f-150-2017-2023-super-duty-generation-6-t-style-radio", lite2: "2015-2020-f-150-2017-2023-super-duty-t-style-lite-2" };
   app().innerHTML = `
