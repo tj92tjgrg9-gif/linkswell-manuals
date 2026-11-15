@@ -402,6 +402,11 @@ function viewSupport(anchor) {
   app().innerHTML = `
     ${crumbs([["#/", "Home"], ["", "Support"]])}
     <h1>Support</h1>
+    <section class="contact">
+      <h2>Tech support contact</h2>
+      <a class="btn primary" href="tel:+19093750633">Call (909) 375-0633</a>
+      <div class="muted small">Mon–Thurs 7 AM–4 PM PST<br>Fri 7 AM–3 PM PST</div>
+    </section>
     <section class="psec" id="firmware"><h2>Firmware updates</h2>
       <p class="muted small">Gen 6 and most XL radios share one update. The 2019+ Silverado/Sierra XL has its own. Lite 2 has its own.</p>
       ${FIRMWARE.map(f => firmwarePanel(f, false)).join("")}</section>
