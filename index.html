@@ -131,6 +131,20 @@
   .links a { text-decoration: none; font-weight: 600; }
   .empty { color: var(--muted); padding: 32px 0; text-align: center; }
 
+  details.acc { font-size: .85rem; border-top: 1px solid var(--border); padding-top: 8px; }
+  details.acc summary { cursor: pointer; font-weight: 600; color: var(--text); }
+  details.acc ul { margin: 6px 0 0; padding-left: 18px; }
+  details.acc li { margin: 3px 0; }
+  .sku { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8em; color: var(--muted); }
+  #accessories { margin-top: 40px; }
+  #accessories > h2, #firmware > h2 { font-size: 1.25rem; margin-bottom: 4px; }
+  #accessories > p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+  .acard { --line: var(--muted); }
+  .acard p { margin: 0; font-size: .9rem; }
+  .acard dl { margin: 0; font-size: .85rem; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
+  .acard dt { color: var(--muted); }
+  .acard dd { margin: 0; }
+  .acard:target { outline: 3px solid var(--accent); }
   #firmware { margin-top: 40px; }
   #firmware > h2 { font-size: 1.25rem; }
   details.fw {
@@ -185,6 +199,12 @@
 <main class="wrap">
   <p class="summary" id="summary"></p>
   <div id="list"></div>
+
+  <section id="accessories">
+    <h2>Accessories</h2>
+    <p id="accsummary"></p>
+    <div class="grid" id="acclist"></div>
+  </section>
 
   <section id="firmware">
     <h2>Firmware updates</h2>
@@ -281,6 +301,76 @@
       manual: "Linkswell-Lite2 19 Ram-Manual.pdf", fw: "lite2", url: "2019-2024-dodge-ram-t-style-lite-2y/" },
     { line: "lite2", title: "2019–2023 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2019, 2023], ["GMC", "Sierra", 2019, 2023]],
       manual: null, fw: "lite2", url: "2019-2023-sierra-silverado-t-style-lite-2/" },
+  ];
+
+  // T-Style accessories from linkswellinc.com (Nov 2026).
+  // fits: [] = any vehicle. lines: null = LinksWell doesn't say which T-Style generations.
+  const GM1418 = [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]];
+  const JEEP = [["Jeep", "Wrangler JL", 2018, 2023], ["Jeep", "Gladiator JT", 2020, 2023]];
+  const ACCESSORIES = [
+    { sku: "DGPUPWHARN22", name: "Power Harness Adapter, 2022+ Ram",
+      what: "Replacement main power harness needed to install a new-body Ram T-Style radio in a 2022 or newer Ram.",
+      fits: [["Ram", RAM_NEW, 2022, 2024]], lines: null, required: true,
+      url: "2022-up-power-harness-adapter-for-new-body-ram-t-style-radios/" },
+    { sku: "FDPUSDHARN", name: "Super Duty 2020–22 Adapter (non-B&O)",
+      what: "New main power harness required on 2020–2022 Super Duty trucks without B&O audio.",
+      fits: [["Ford", "Super Duty", 2020, 2022]], lines: null, required: true,
+      note: "Trucks with B&O audio use FDSDBOADPT instead.",
+      url: "ford-superduty-2020-22adapter/" },
+    { sku: "FDPUBOADPT", name: "F-150 B&O Audio Harness Adapter",
+      what: "Replaces the radio's main harness to keep the factory B&O audio. Includes relocation brackets, B&O CAN bus adaptor and T-harness.",
+      fits: [["Ford", "F-150", 2015, 2020]], lines: null,
+      note: "Only for trucks with factory B&O audio.",
+      url: "ford-f-150-bo-audio-harness-adapter/" },
+    { sku: "FDSDBOADPT", name: "Super Duty B&O Audio Harness Adaptor",
+      what: "Replaces the radio's main harness to keep the factory B&O audio. Includes relocation brackets, B&O CAN bus adaptor and T-harness.",
+      fits: [["Ford", "Super Duty", 2017, 2022]], lines: null,
+      note: "Only for trucks with factory B&O audio.",
+      url: "ford-superduty-2017-22-bo-audio-harness-adaptor/" },
+    { sku: "FDPU360ADPT", name: "Ford 360 Camera Retention Adaptor",
+      what: "Keeps the factory 360 camera and its on-screen controls: tailgate zoom, trailer assist, cargo view and brake-light camera.",
+      fits: [["Ford", "F-150", 2018, 2020], ["Ford", "Super Duty", 2018, 2023], ["Ford", "Expedition", 2018, 2022]], lines: null,
+      note: "Only needed when the 360 camera is controlled from the touch screen. If it uses a physical camera button, just turn on the 360 options in the radio settings. Plugs into the 54-pin harness that comes with the radio.",
+      url: "factory-ford-360-camera-retention-adaptor/" },
+    { sku: "TS-FDPUMCADPT", name: "Ford F-Series Multi-Camera Interface",
+      what: "Adds 7 camera inputs (front, rear, left, right, cargo, trailer, aux), triggered by the vehicle's CAN bus and controlled from the touch screen.",
+      fits: [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]], lines: null,
+      note: "LinksWell lists it for its Ford F-Series T-Style radios without giving years.",
+      url: "multi-camera-interface-for-the-linkswell-ford-f-series-t-style-radios/" },
+    { sku: "FDPUACFLTKIT", name: "Ford Fleet Truck Climate Control Adapter",
+      what: "Makes Ford fleet-truck climate controls work with the T-Style radio.",
+      fits: [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]], lines: null,
+      note: "LinksWell says it's for FDED12 radios (e.g. TS-FDED12-4RR). Check the radio's model number. Years aren't listed.",
+      url: "ts-fdpuacfltkit-ford-fleet-truck-climate-control-adapter/" },
+    { sku: "GMPUBSADPT", name: "GM Bose Adaptor",
+      what: "Plug-and-play interface that keeps the factory Bose (MOST) amplifier and its settings.",
+      fits: GM1418, lines: null,
+      note: "Works only with the LinksWell GM T-Style radio.",
+      url: "2014-2018-chevy-silverado-gmc-sierra-bose-adaptor-for-the-t-style-radios/" },
+    { sku: "GMPUUSBHDMI", name: "GM Dual USB / HDMI / AUX Input Panel",
+      what: "Replaces the factory GM USB/SD/AUX hub with 2 USB ports, 1 HDMI port and a 3.5 mm AUX jack with L/R RCA.",
+      fits: GM1418, lines: null,
+      url: "dual-usb-hdmi-aux-input-panel-for-gm/" },
+    { sku: "JP4XEORPADPT-01", name: "Jeep 4xe & Off-Road Page Retention Module",
+      what: "Keeps the 4xe hybrid pages and Max Charge, and keeps or adds the off-road pages.",
+      fits: JEEP, lines: ["gen6", "xl"],
+      note: "LinksWell doesn't list Jeep models or years; shown here for Wrangler JL and Gladiator JT.",
+      url: "jp-4xeorp-adpt-01/" },
+    { sku: "JDCAMADPT19", name: "Jeep / Ram Factory Camera Retention Adapter",
+      what: "Adapts the factory reverse camera (FAKRA) to RCA video, CVBS or AHD, for a universal-style install. May be labeled XSBOX-006.",
+      fits: [...JEEP, ["Jeep", "Grand Cherokee", 2018, 2021], ["Ram", RAM_OLD, 2018, 2023], ["Ram", RAM_NEW, 2019, 2023]], lines: null,
+      note: "LinksWell lists it as “2018–23 Jeep/Dodge” without naming models. Confirm fit.",
+      url: "2018-2020-jeep-dodge-factory-camera-retention-adapter/" },
+    { sku: "LWTSHDMIIN", name: "HDMI Input Adapter",
+      what: "Adds an HDMI input to the radio.",
+      fits: [], lines: ["gen6", "xl"],
+      note: "Only for radios whose model number ends in H or S.",
+      url: "hdmi-input-adapter/" },
+    { sku: "USBDVRCAM", name: "USB DVR Camera",
+      what: "USB dash cam with SD card slot and ADAS alerts: lane departure, collision warning, stop-and-go.",
+      fits: [], lines: null,
+      note: "Needs the DVR ADAS app installed on the radio (see LinksWell's T-Style Apps page).",
+      url: "usb-dvr-camera/" },
   ];
 
   // Firmware as posted on linkswellinc.com support pages
@@ -391,6 +481,44 @@
     return terms.every(t => /^\d{4}$/.test(t) ? years.includes(+t) : hay.includes(t));
   }
 
+  // does accessory a apply to product p, given the current make/model/year?
+  function accApplies(a, p) {
+    if (a.lines && !a.lines.includes(p.line)) return false;
+    if (!a.fits.length) return true;
+    return a.fits.some(([mk, md, a1, a2]) =>
+      (!state.make || mk === state.make) && (!state.model || md === state.model) &&
+      (!state.year || (+state.year >= a1 && +state.year <= a2)) &&
+      p.fits.some(([pmk, pmd, p1, p2]) => pmk === mk && pmd === md && a1 <= p2 && p1 <= a2));
+  }
+  const accsFor = (p) => ACCESSORIES.filter(a => accApplies(a, p));
+  const accId = (a) => "acc-" + a.sku.toLowerCase();
+
+  function fitText(a) {
+    if (!a.fits.length) return "Any vehicle";
+    return a.fits.map(([mk, md, y1, y2]) => `${md.startsWith(mk) ? "" : mk + " "}${md} ${y1}–${y2}`).join(" · ");
+  }
+  function linesText(a) {
+    return a.lines ? a.lines.map(id => lineOf(id).name).join(", ") + " only" : "T-Style radios (generations not listed)";
+  }
+
+  function accCard(a) {
+    return `<article class="card acard" id="${accId(a)}">
+      <div class="badge">${a.required ? "Required for some installs" : "Accessory"} · <span class="sku">${esc(a.sku)}</span></div>
+      <h3>${esc(a.name)}</h3>
+      <p>${esc(a.what)}</p>
+      <dl><dt>Fits</dt><dd>${esc(fitText(a))}</dd><dt>Radios</dt><dd>${esc(linesText(a))}</dd></dl>
+      ${a.note ? `<div class="note">${esc(a.note)}</div>` : ""}
+      <div class="links"><a href="${SITE + a.url}" target="_blank" rel="noopener">Product page ↗</a></div>
+    </article>`;
+  }
+
+  function accList(p) {
+    const accs = accsFor(p);
+    if (!accs.length) return "";
+    return `<details class="acc"><summary>Accessories (${accs.length})</summary><ul>${accs.map(a =>
+      `<li><a href="#${accId(a)}">${esc(a.name)}</a> <span class="sku">${esc(a.sku)}</span>${a.required ? " · <strong>required for some installs</strong>" : ""}</li>`).join("")}</ul></details>`;
+  }
+
   function card(p) {
     const l = lineOf(p.line);
     const fw = fwOf(p.fw);
@@ -407,6 +535,7 @@
         <a href="#fw-${fw.id}" data-fw="${fw.id}">Firmware: ${esc(fw.name)}</a>
         ${p.url ? `<a href="${SITE + p.url}" target="_blank" rel="noopener">Product page ↗</a>` : ""}
       </div>
+      ${accList(p)}
     </article>`;
   }
 
@@ -418,6 +547,12 @@
       return `<section><h2><span class="dot" style="background:${l.color}"></span>${esc(l.name)}</h2>
         <div class="grid">${items.map(card).join("")}</div></section>`;
     }).join("") || `<p class="empty">Nothing from XL, Gen 6 or Lite 2 fits that vehicle.</p>`;
+
+    const accs = ACCESSORIES.filter(a => shown.some(p => accApplies(a, p)));
+    $("acclist").innerHTML = accs.map(accCard).join("");
+    $("accsummary").textContent = accs.length
+      ? (state.make || state.line !== "all" || $("q").value ? `${accs.length} accessories match the products above.` : `${accs.length} T-Style accessories for XL, Gen 6 and Lite 2.`)
+      : "No accessories match the products above.";
 
     const make = state.model.startsWith(state.make) ? "" : state.make;
     const vehicle = [state.year, make, state.model].filter(Boolean).join(" ");
