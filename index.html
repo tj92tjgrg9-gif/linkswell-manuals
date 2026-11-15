@@ -145,6 +145,22 @@
   .acard dt { color: var(--muted); }
   .acard dd { margin: 0; }
   .acard:target { outline: 3px solid var(--accent); }
+  #faqs { margin-top: 40px; }
+  #faqs > h2 { font-size: 1.25rem; margin-bottom: 4px; }
+  #faqs > p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
+  #faqs h3 { font-size: 1rem; margin: 20px 0 6px; }
+  details.faq {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-top: 8px;
+  }
+  details.faq summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
+  details.faq summary .tag { font-weight: 600; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-left: 6px; }
+  details.faq .faq-body { padding: 0 16px 14px; font-size: .92rem; }
+  details.faq .faq-body p { margin: 0 0 6px; }
+  details.faq .faq-body ol { margin: 4px 0 6px; padding-left: 20px; }
+  details.faq:target { outline: 3px solid var(--accent); }
   #firmware { margin-top: 40px; }
   #firmware > h2 { font-size: 1.25rem; }
   details.fw {
@@ -204,6 +220,12 @@
     <h2>Accessories</h2>
     <p id="accsummary"></p>
     <div class="grid" id="acclist"></div>
+  </section>
+
+  <section id="faqs">
+    <h2>FAQs</h2>
+    <p id="faqsummary"></p>
+    <div id="faqlist"></div>
   </section>
 
   <section id="firmware">
@@ -373,6 +395,110 @@
       url: "usb-dvr-camera/" },
   ];
 
+  // FAQs from linkswellinc.com/faqs (Nov 2026), reworded. LinksWell wrote them for older
+  // T-Style generations; answers only for Gen II–IV or the old settings menu are left out.
+  // fits: [] = every vehicle. kind: "buy" (before you buy) or "fix" (troubleshooting).
+  const FORD_F = [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]];
+  const GM_T = [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]];
+  const RAM_T = [["Ram", RAM_OLD, 2013, 2024]];
+  const TUNDRA = [["Toyota", "Tundra", 2014, 2022]];
+  const CLIMATE_GUIDE = {
+    ford: "https://www.dropbox.com/sh/p13kx17mexnkrrd/AAAJ46dpdY5KYkH-waWYZIx7a?dl=0",
+    gm: "https://www.dropbox.com/sh/s7bk2l1pp702m79/AADnOFusQaGRsgMEXeNvmByfa?dl=0",
+    ramTundra: "https://www.dropbox.com/sh/rum1uw97lmeqgos/AADTF5DaEO9I9OPe_PPcyoB_a?dl=0",
+  };
+  const RIGHT_CAM_STEPS = ["Settings → System (top right) → Factory settings → enter 1660 → OK.", "Install Set (left side) → turn off “Switch to Right Camera when turn signal is detected”.", "Save and Reboot."];
+  const SEAT_STEPS = ["Settings → System (top right) → Setting Guide → Seat & Steering Wheel.", "Turn on the options the truck has → OK.", "Save and Reboot."];
+
+  const FAQS = [
+    // every vehicle
+    { id: "clock", kind: "fix", fits: [], q: "The clock resets every time the vehicle restarts",
+      a: "The radio gets the time from more than one source. Set it by hand:",
+      steps: ["Settings → Android settings (More Settings at the top, or System at top right) → System → Date and time.", "Turn off automatic date & time and automatic time zone.", "Set the time zone, then the time."] },
+    { id: "nosignal", kind: "fix", fits: [], q: "Screen goes black and says NO SIGNAL with the right turn signal on",
+      a: "The radio is set to switch to an aftermarket right-side camera. Turn that off:", steps: RIGHT_CAM_STEPS },
+    { id: "btcall", kind: "fix", fits: [], q: "The phone screen can't be minimized during a call",
+      a: "That's an Android limitation: the Bluetooth app has to stay in front or the call drops. Navigation can run in the background; calls can't." },
+    { id: "seats", kind: "fix", fits: [...FORD_F, ...RAM_T], q: "Heated/cooled seat or heated wheel buttons are missing",
+      a: "Turn on the options the truck has:", steps: SEAT_STEPS },
+    { id: "iphone", kind: "buy", fits: [], q: "Does the radio work with an iPhone?",
+      a: "Yes. The radio runs Android, but Bluetooth and PhoneLink work normally with iPhones." },
+    { id: "swc", kind: "buy", fits: [], q: "Are steering wheel controls and SiriusXM kept?",
+      a: "Steering wheel controls are kept except the voice-command button. SiriusXM satellite radio and the factory microphone are not kept; customers can stream SiriusXM from their phone or the radio instead." },
+
+    // Ford F-Series
+    { id: "f-lose", kind: "buy", fits: FORD_F, q: "F-Series: what factory features are lost?",
+      a: "SiriusXM satellite radio, SYNC and FordPass, the Rapid-Heat supplemental cab heater, and the factory microphone." },
+    { id: "f-keep", kind: "buy", fits: FORD_F, q: "F-Series: what comfort features still work?",
+      a: "Heated, cooled and massage seats, the heated steering wheel and ambient lighting controls. Climate control moves to the touch screen." },
+    { id: "f-adapters", kind: "buy", fits: FORD_F, q: "F-Series: are extra adapters needed?",
+      a: "Possibly. Trucks with B&O audio or a touch-screen 360 camera need adapters, and 2020+ Super Duty trucks need a harness adapter. Factory navigation is not kept.",
+      acc: ["FDPUBOADPT", "FDSDBOADPT", "FDPU360ADPT", "FDPUSDHARN"] },
+    { id: "f-holes", kind: "buy", fits: FORD_F, q: "F-Series: the truck has two button holes above the screen, the radio has three",
+      a: "That's fine. The radio ships with three blank plates, so it fits trucks with two or three holes." },
+    { id: "f-remote", kind: "fix", fits: FORD_F, q: "F-Series: AC runs at full fan on remote start",
+      a: "Change it in the truck's instrument cluster, not the radio:",
+      steps: ["Cluster → Settings (far right) → Advanced Settings → Vehicle → Remote Start → Climate.", "Change AUTO to Last Setting."] },
+    { id: "f-temp", kind: "fix", fits: FORD_F, q: "F-Series: driver temperature is reversed (hot blows cold)",
+      a: "The truck has auto/dual-zone AC but the radio is set to manual AC. Set the correct climate type using the Ford climate setup guide.",
+      link: [CLIMATE_GUIDE.ford, "Ford climate setup guide"] },
+    { id: "f-lamp", kind: "fix", fits: FORD_F, q: "F-Series: where are massage seats and ambient lighting?",
+      a: "App list → System App → SEAT (massage) and LAMP (ambient lighting). If LAMP is missing:",
+      steps: ["Settings → System (top right) → Factory settings → enter 1660 → OK.", "Install Set → turn on Ford Lamp.", "Save and Reboot."] },
+    { id: "f-360", kind: "fix", fits: FORD_F, q: "F-Series: the factory 360 camera button doesn't work",
+      a: "Turn on the 360 camera in settings. Trucks whose 360 camera is controlled from the touch screen also need the 360 adaptor.",
+      steps: ["Settings → System (top right) → Setting Guide → Camera.", "Turn on 360 Camera → OK.", "Save and Reboot."], acc: ["FDPU360ADPT"] },
+    { id: "f-tweeter", kind: "fix", fits: FORD_F, q: "F-Series: sound only comes from the dash tweeters",
+      a: "The truck has B&O audio. It needs the B&O adapter, or an aftermarket amplifier for the speakers.",
+      acc: ["FDPUBOADPT", "FDSDBOADPT"] },
+
+    // GM Silverado / Sierra (2014–18 body)
+    { id: "g-2019", kind: "buy", fits: [["Chevrolet", "Silverado", 2014, 2019], ["GMC", "Sierra", 2014, 2019]], q: "GM: does the 2014–18 radio fit a 2019 2500/3500?",
+      a: "Yes. 2019 HD trucks kept the older dash. If the dash matches the 2014–18 shape, the 2014–18 radio fits." },
+    { id: "g-lose", kind: "buy", fits: GM_T, q: "GM: what factory features are lost?",
+      a: "SiriusXM satellite radio, the myChevrolet/myGMC app, the fan turning down during phone calls, factory rear-seat entertainment, and the factory microphone." },
+    { id: "g-adapters", kind: "buy", fits: GM_T, q: "GM: are extra adapters needed?",
+      a: "Trucks with BOSE audio may need the Bose adaptor. Factory navigation is not kept.", acc: ["GMPUBSADPT"] },
+    { id: "g-denali", kind: "buy", fits: GM_T, q: "GM: Denali has brown/pewter trim, not silver",
+      a: "An optional pewter trim set is available to match Denali trim." },
+    { id: "g-buttons", kind: "fix", fits: GM_T, q: "GM: physical climate buttons don't work",
+      a: "Plug the white “TO RADIO” connector on the climate control harness into the back of the radio." },
+    { id: "g-fan", kind: "fix", fits: GM_T, q: "GM: fan speed is backwards (0 blows, 8 stops)",
+      a: "The truck has auto/dual-zone AC but the radio is set to manual AC. Set the correct climate type using the GM climate setup guide.",
+      link: [CLIMATE_GUIDE.gm, "GM climate setup guide"] },
+    { id: "g-wheel", kind: "fix", fits: GM_T, q: "GM: heated steering wheel option is missing",
+      a: "Heated/cooled seats keep their factory buttons. For the heated wheel:", steps: SEAT_STEPS },
+    { id: "g-audio", kind: "fix", fits: GM_T, q: "GM: no audio after install",
+      a: "The truck likely has BOSE audio. It needs the Bose adaptor, or an aftermarket amplifier.", acc: ["GMPUBSADPT"] },
+
+    // Ram (2013–18 body / Classic)
+    { id: "r-lose", kind: "buy", fits: RAM_T, q: "Ram: what factory features are lost?",
+      a: "SiriusXM satellite radio, air-ride settings on the touch screen (LinksWell says an update is planned), Ram's built-in truck Wi-Fi, and the factory microphone. Climate control moves to the touch screen." },
+    { id: "r-hazard", kind: "fix", fits: RAM_T, q: "Ram: hazard light button doesn't work",
+      a: "Usually a connection problem:",
+      steps: ["Unplug the main power harness and the red CAN box.", "Check for bent pins or loose wires, then reconnect.", "If it still doesn't work, hold the hazard button for 30–60 seconds."] },
+    { id: "r-climate", kind: "fix", fits: RAM_T, q: "Ram: fan speeds or temperature are wrong",
+      a: "The radio is probably set to the wrong climate type. Use the Ram climate setup guide.",
+      link: [CLIMATE_GUIDE.ramTundra, "Ram/Tundra climate setup guide"] },
+    { id: "r-audio", kind: "fix", fits: RAM_T, q: "Ram: no audio after install",
+      a: "Check the HI/LO audio plug on the main power harness. The white “Dodge Ram Audio Output” connector must go into “Dodge Ram HI Audio” for Alpine systems or “Dodge Ram LO Audio” for standard audio. All three plugs are on the main harness." },
+
+    // Toyota Tundra
+    { id: "t-lose", kind: "buy", fits: TUNDRA, q: "Tundra: what factory features are lost?",
+      a: "Only SiriusXM satellite radio and the factory microphone. Heated/cooled seats still work." },
+    { id: "t-buttons", kind: "fix", fits: TUNDRA, q: "Tundra: physical climate buttons don't work",
+      a: "Plug the white “TO RADIO” connector on the climate control harness into the back of the radio." },
+    { id: "t-climate", kind: "fix", fits: TUNDRA, q: "Tundra: fan speeds or temperature are wrong",
+      a: "The radio is probably set to the wrong climate type. Use the climate setup guide (LinksWell links the same guide for Ram and Tundra).",
+      link: [CLIMATE_GUIDE.ramTundra, "Ram/Tundra climate setup guide"] },
+    { id: "t-seats", kind: "fix", fits: TUNDRA, q: "Tundra: heated/cooled seat options are missing",
+      a: "First set the climate type to “TUNDRA HI W/ Seat Heaters”. Then:", steps: SEAT_STEPS },
+    { id: "t-srs", kind: "fix", fits: TUNDRA, q: "Tundra: SRS airbag light after install",
+      a: "Very common. Check every main harness plug for bent pins, and make sure the Emergency Light plug on the main harness is connected to the matching plug on the climate control connector." },
+    { id: "t-audio", kind: "fix", fits: TUNDRA, q: "Tundra: no audio after install",
+      a: "Check every main harness plug for bent pins. On JBL systems that won't turn on, check the climate setup, then call LinksWell: it can be several things." },
+  ];
+
   // Firmware as posted on linkswellinc.com support pages
   const FIRMWARE = [
     { id: "gen6xl", name: "Gen 6 & T-Style XL", color: "var(--xl)", asOf: "LinksWell page dated 08/03/2026",
@@ -481,8 +607,8 @@
     return terms.every(t => /^\d{4}$/.test(t) ? years.includes(+t) : hay.includes(t));
   }
 
-  // does accessory a apply to product p, given the current make/model/year?
-  function accApplies(a, p) {
+  // does an accessory or FAQ apply to product p, given the current make/model/year?
+  function appliesTo(a, p) {
     if (a.lines && !a.lines.includes(p.line)) return false;
     if (!a.fits.length) return true;
     return a.fits.some(([mk, md, a1, a2]) =>
@@ -490,7 +616,7 @@
       (!state.year || (+state.year >= a1 && +state.year <= a2)) &&
       p.fits.some(([pmk, pmd, p1, p2]) => pmk === mk && pmd === md && a1 <= p2 && p1 <= a2));
   }
-  const accsFor = (p) => ACCESSORIES.filter(a => accApplies(a, p));
+  const accsFor = (p) => ACCESSORIES.filter(a => appliesTo(a, p));
   const accId = (a) => "acc-" + a.sku.toLowerCase();
 
   function fitText(a) {
@@ -519,6 +645,30 @@
       `<li><a href="#${accId(a)}">${esc(a.name)}</a> <span class="sku">${esc(a.sku)}</span>${a.required ? " · <strong>required for some installs</strong>" : ""}</li>`).join("")}</ul></details>`;
   }
 
+  const faqsFor = (p) => FAQS.filter(f => appliesTo(f, p));
+  function faqList(p) {
+    const faqs = faqsFor(p).filter(f => f.fits.length);
+    if (!faqs.length) return "";
+    return `<details class="acc"><summary>FAQs (${faqs.length})</summary><ul>${faqs.map(f =>
+      `<li><a href="#faq-${f.id}" data-faq="${f.id}">${esc(f.q)}</a></li>`).join("")}</ul></details>`;
+  }
+
+  function faqItem(f) {
+    const accLinks = (f.acc || []).map(sku => {
+      const a = ACCESSORIES.find(x => x.sku === sku);
+      return `<a href="#${accId(a)}">${esc(a.name)}</a> <span class="sku">${esc(sku)}</span>`;
+    });
+    return `<details class="faq" id="faq-${f.id}">
+      <summary>${esc(f.q)}<span class="tag">${f.kind === "buy" ? "Before you buy" : "Troubleshooting"}</span></summary>
+      <div class="faq-body">
+        <p>${esc(f.a)}</p>
+        ${f.steps ? `<ol>${f.steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}
+        ${f.link ? `<p><a href="${f.link[0]}" target="_blank" rel="noopener">${esc(f.link[1])} ↗</a></p>` : ""}
+        ${accLinks.length ? `<p>Accessories: ${accLinks.join(" · ")}</p>` : ""}
+      </div>
+    </details>`;
+  }
+
   function card(p) {
     const l = lineOf(p.line);
     const fw = fwOf(p.fw);
@@ -536,6 +686,7 @@
         ${p.url ? `<a href="${SITE + p.url}" target="_blank" rel="noopener">Product page ↗</a>` : ""}
       </div>
       ${accList(p)}
+      ${faqList(p)}
     </article>`;
   }
 
@@ -548,11 +699,19 @@
         <div class="grid">${items.map(card).join("")}</div></section>`;
     }).join("") || `<p class="empty">Nothing from XL, Gen 6 or Lite 2 fits that vehicle.</p>`;
 
-    const accs = ACCESSORIES.filter(a => shown.some(p => accApplies(a, p)));
+    const accs = ACCESSORIES.filter(a => shown.some(p => appliesTo(a, p)));
     $("acclist").innerHTML = accs.map(accCard).join("");
     $("accsummary").textContent = accs.length
       ? (state.make || state.line !== "all" || $("q").value ? `${accs.length} accessories match the products above.` : `${accs.length} T-Style accessories for XL, Gen 6 and Lite 2.`)
       : "No accessories match the products above.";
+
+    const faqs = FAQS.filter(f => shown.some(p => appliesTo(f, p)));
+    const groups = [["fix", "Troubleshooting"], ["buy", "Before you buy"]].map(([k, label]) => {
+      const items = faqs.filter(f => f.kind === k);
+      return items.length ? `<h3>${label}</h3>` + items.map(faqItem).join("") : "";
+    }).join("");
+    $("faqlist").innerHTML = groups;
+    $("faqsummary").textContent = "From LinksWell's FAQ pages, which only cover F-Series, GM trucks, Ram and Tundra. Answers written only for older Gen II–IV radios are left out. Settings paths are for the current menu and may differ on Lite 2.";
 
     const make = state.model.startsWith(state.make) ? "" : state.make;
     const vehicle = [state.year, make, state.model].filter(Boolean).join(" ");
@@ -577,6 +736,8 @@
     </details>`).join("");
 
   document.addEventListener("click", (e) => {
+    const f = e.target.closest("a[data-faq]");
+    if (f) { $("faq-" + f.dataset.faq).open = true; return; }
     const a = e.target.closest("a[data-fw]");
     if (!a) return;
     const d = $("fw-" + a.dataset.fw);
