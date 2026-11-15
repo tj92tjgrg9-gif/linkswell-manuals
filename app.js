@@ -400,7 +400,7 @@ function viewAccessory(sku, params) {
     ${faqs.length ? `<section class="psec"><h2>Related FAQs</h2>${faqs.map(f => faqItem(f, v)).join("")}</section>` : ""}
     ${c.videos.length ? `<section class="psec"><h2>Videos</h2>${videos(c.videos)}</section>` : ""}
     ${a.url ? `<p class="muted small source">Photos from <a href="${SITE + a.url}" target="_blank" rel="noopener">LinksWell's product page ↗</a></p>`
-      : a.source ? `<p class="muted small source">LinksWell has no product page for this part. ${(a.images || []).some(u => u.includes(new URL(a.source[0]).hostname)) ? "Photos and details" : "Details"} from <a href="${a.source[0]}" target="_blank" rel="noopener">${esc(a.source[1])} ↗</a>.</p>`
+      : a.source ? `<p class="muted small source">LinksWell has no product page for this part. ${a.photosFromSource || (a.images || []).some(u => u.includes(new URL(a.source[0]).hostname)) ? "Photos and details" : "Details"} from <a href="${a.source[0]}" target="_blank" rel="noopener">${esc(a.source[1])} ↗</a>.</p>`
       : `<p class="muted small source">LinksWell has no product page for this part, so there are no photos or specs.</p>`}`;
   wireGallery(app());
 }
