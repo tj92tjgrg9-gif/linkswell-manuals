@@ -27,7 +27,11 @@ PRODUCTS.forEach(p => {
   p.manualHref = p.manual ? encodeURI(lineOf(p.line).folder + "/" + p.manual) : "";
   p.model = p.vpn || p.cat.model || "";
 });
-ACCESSORIES.forEach(a => { a.cat = (a.url && CATALOG[a.url.replace(/\/$/, "")]) || { images: [], specs: [], notes: [], videos: [] }; });
+// Accessories without a LinksWell page can carry their own specs (and a source) in data.js.
+ACCESSORIES.forEach(a => {
+  a.cat = (a.url && CATALOG[a.url.replace(/\/$/, "")]) ||
+    { images: a.images || [], specs: (a.specs || []).map(t => ({ t, sub: [] })), notes: [], videos: [] };
+});
 const allFits = PRODUCTS.flatMap(p => p.fits);
 const requiredFirst = (list) => list.sort((a, b) => (b.required ? 1 : 0) - (a.required ? 1 : 0));
 
@@ -395,7 +399,9 @@ function viewAccessory(sku, params) {
     ${radios.length ? `<section class="psec"><h2>Works with${hasVehicle(v) ? ` (${esc(vehicleLabel(v))})` : ""}</h2><div class="grid">${radios.map(p => productTile(p, v)).join("")}</div></section>` : ""}
     ${faqs.length ? `<section class="psec"><h2>Related FAQs</h2>${faqs.map(f => faqItem(f, v)).join("")}</section>` : ""}
     ${c.videos.length ? `<section class="psec"><h2>Videos</h2>${videos(c.videos)}</section>` : ""}
-    ${a.url ? `<p class="muted small source">Photos from <a href="${SITE + a.url}" target="_blank" rel="noopener">LinksWell's product page ↗</a></p>` : `<p class="muted small source">LinksWell has no product page for this part, so there are no photos or specs.</p>`}`;
+    ${a.url ? `<p class="muted small source">Photos from <a href="${SITE + a.url}" target="_blank" rel="noopener">LinksWell's product page ↗</a></p>`
+      : a.source ? `<p class="muted small source">LinksWell has no product page for this part. Details from <a href="${a.source[0]}" target="_blank" rel="noopener">${esc(a.source[1])} ↗</a>.</p>`
+      : `<p class="muted small source">LinksWell has no product page for this part, so there are no photos or specs.</p>`}`;
   wireGallery(app());
 }
 
