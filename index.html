@@ -15,6 +15,11 @@
     --accent-soft: #E8EEFC;
     --bar: #1B2330;
     --bar-text: #FFFFFF;
+    --xl: #1D4ED8;
+    --gen6: #0F766E;
+    --lite2: #B45309;
+    --warn-bg: #FFF7E6;
+    --warn-text: #8A5A00;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -26,6 +31,11 @@
       --accent: #6E95F5;
       --accent-soft: #1E2A44;
       --bar: #0A0E13;
+      --xl: #6E95F5;
+      --gen6: #2DD4BF;
+      --lite2: #F59E0B;
+      --warn-bg: #2B2414;
+      --warn-text: #F3C46B;
     }
   }
   * { box-sizing: border-box; }
@@ -36,29 +46,44 @@
     font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     line-height: 1.45;
   }
-  header {
-    background: var(--bar);
-    color: var(--bar-text);
-    padding: 28px 16px 24px;
-  }
+  a { color: var(--accent); }
+  header { background: var(--bar); color: var(--bar-text); padding: 28px 16px 24px; }
   .wrap { max-width: 1040px; margin: 0 auto; }
   h1 { margin: 0 0 4px; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
   header p { margin: 0; opacity: .75; }
 
-  .controls {
-    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-    padding: 20px 16px 4px;
+  .finder {
+    margin: 20px auto 0;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
   }
-  .search {
-    flex: 1 1 260px;
-    padding: 11px 14px;
+  .finder h2 { margin: 0 0 12px; font-size: 1rem; }
+  .selects { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 10px; align-items: end; }
+  label { display: block; font-size: .8rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  select, .search {
+    width: 100%;
+    padding: 10px 12px;
     font: inherit;
     color: var(--text);
-    background: var(--surface);
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
   }
-  .search:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  select:disabled { opacity: .5; }
+  select:focus, .search:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .reset {
+    font: inherit; font-size: .9rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .row2 { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+  .row2 .search { flex: 1 1 240px; width: auto; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chip {
     font: inherit; font-size: .875rem;
@@ -71,24 +96,23 @@
   }
   .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  main { padding: 8px 16px 48px; }
-  section { margin-top: 28px; }
-  section h2 { font-size: 1.1rem; margin: 0 0 2px; }
-  section .sub { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-  }
+  main { padding: 0 16px 48px; }
+  .summary { margin: 18px 0 0; color: var(--muted); font-size: .9rem; }
+  section { margin-top: 24px; }
+  section > h2 { font-size: 1.1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
+    border-left: 4px solid var(--line);
     border-radius: 10px;
     padding: 14px 16px;
     display: flex; flex-direction: column; gap: 10px;
   }
   .card h3 { margin: 0; font-size: 1rem; font-weight: 600; }
-  .card .meta { color: var(--muted); font-size: .85rem; }
+  .badge { font-size: .75rem; font-weight: 700; color: var(--line); text-transform: uppercase; letter-spacing: .04em; }
+  .note { font-size: .82rem; background: var(--warn-bg); color: var(--warn-text); padding: 6px 8px; border-radius: 6px; }
   .actions { display: flex; gap: 8px; margin-top: auto; }
   .btn {
     flex: 1;
@@ -102,125 +126,355 @@
   .btn.primary { background: var(--accent); color: #fff; }
   .btn.ghost { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
   .btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .nomanual { flex: 1; font-size: .85rem; color: var(--muted); padding: 8px 0; }
+  .links { display: flex; gap: 14px; font-size: .85rem; }
+  .links a { text-decoration: none; font-weight: 600; }
   .empty { color: var(--muted); padding: 32px 0; text-align: center; }
+
+  #firmware { margin-top: 40px; }
+  #firmware > h2 { font-size: 1.25rem; }
+  details.fw {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--line);
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+  details.fw summary { cursor: pointer; padding: 14px 16px; font-weight: 600; }
+  details.fw summary small { font-weight: 400; color: var(--muted); }
+  .fw-body { padding: 0 16px 16px; }
+  .fw-body h4 { margin: 14px 0 6px; font-size: .95rem; }
+  .fw-body ol { margin: 0; padding-left: 20px; }
+  .fw-body li { margin: 2px 0; }
+  .fw-dl { display: inline-block; margin: 2px 0 6px; font-weight: 600; }
+  .ver { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+  .src { font-size: .85rem; color: var(--muted); margin-top: 12px; }
   [hidden] { display: none !important; }
+
+  @media (max-width: 640px) {
+    .selects { grid-template-columns: 1fr 1fr; }
+    .selects > div:first-child { grid-column: 1 / -1; }
+    .reset { grid-column: 1 / -1; }
+  }
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
     <h1>Linkswell Radio Install Guides</h1>
-    <p id="count">26 manuals for LinksWell radios and camera interfaces</p>
+    <p>T-Style XL · Gen 6 · Lite 2: manuals, fitment and firmware</p>
   </div>
 </header>
 
-<div class="wrap controls">
-  <input class="search" id="q" type="search" placeholder="Search by vehicle, e.g. F150, Tacoma, Ram 2019" aria-label="Search manuals">
-  <div class="chips" id="chips" role="group" aria-label="Filter by product line"></div>
+<div class="wrap" style="padding: 0 16px;">
+  <div class="finder">
+    <h2>Find by vehicle</h2>
+    <div class="selects">
+      <div><label for="make">Make</label><select id="make"></select></div>
+      <div><label for="model">Model</label><select id="model" disabled></select></div>
+      <div><label for="year">Year</label><select id="year" disabled></select></div>
+      <button class="reset" id="reset" type="button">Clear</button>
+    </div>
+    <div class="row2">
+      <input class="search" id="q" type="search" placeholder="Or search, e.g. Tacoma, Super Duty, Ram 2019" aria-label="Search">
+      <div class="chips" id="chips" role="group" aria-label="Filter by product line"></div>
+    </div>
+  </div>
 </div>
 
-<main class="wrap" id="list"></main>
+<main class="wrap">
+  <p class="summary" id="summary"></p>
+  <div id="list"></div>
+
+  <section id="firmware">
+    <h2>Firmware updates</h2>
+    <div id="fwlist"></div>
+  </section>
+</main>
 
 <script>
   const LINES = [
-    { id: "xl",   name: "T-Style XL Radio",    folder: "t-style-xl" },
-    { id: "gen6", name: "Gen 6 T-Style Radio", folder: "gen6-t-style" },
-    { id: "lite2",name: "Lite 2",              folder: "lite-2" },
-    { id: "gm",   name: "GM Multi-Camera Interface", folder: "gm-i0b" },
-    { id: "sync3", name: "Ford SYNC 3 Multi-Camera Interface", folder: "6av" },
+    { id: "xl",    name: "T-Style XL", folder: "t-style-xl",   color: "var(--xl)" },
+    { id: "gen6",  name: "Gen 6",      folder: "gen6-t-style", color: "var(--gen6)" },
+    { id: "lite2", name: "Lite 2",     folder: "lite-2",       color: "var(--lite2)" },
   ];
 
-  // title = vehicle coverage as printed on the manual's cover page
-  const MANUALS = [
-    ["gen6", "2013–2014 Ford F150", "13-14 F150 Gen 6 Radio.pdf", 5.88],
-    ["gen6", "2014–2018 Dodge Ram (12\")", "13-18 Ram 12\" Gen 6 Radio.pdf", 5.91],
-    ["gen6", "2007–2014 Cadillac", "Cadillac Gen 6 Radio.pdf", 5.83],
-    ["gen6", "2019–2020 Ford Expedition", "Expedition Gen 6 Radio.pdf", 5.96],
-    ["gen6", "2015–2020 Ford F150 · 2017–2020 Super Duty", "F-Series Gen 6 Radio.pdf", 5.96],
-    ["gen6", "2014–2019 Jeep Grand Cherokee", "Grand Cherokee Gen 6 Radio.pdf", 6.18],
-    ["gen6", "2018+ Jeep Wrangler · 2020+ Gladiator", "Jeep Wrangler Gen 6 Radio.pdf", 5.90],
-    ["gen6", "2015–2020 Ford Mustang", "Mustang Gen 6 Radio.pdf", 5.98],
-    ["gen6", "2018+ Ford Ranger", "Ranger Gen 6 Radio.pdf", 5.89],
-    ["gen6", "2014–2018 Chevy Silverado", "Silverado Gen 6 Radio.pdf", 6.07],
-    ["gen6", "2016–2023 Toyota Tacoma", "Tacoma Gen 6 Radio.pdf", 7.55],
-    ["gen6", "2014–2020 Toyota Tundra", "Tundra Gen 6 Radio.pdf", 5.93],
+  const RAM_OLD = "Ram (2013–18 body / Classic)";
+  const RAM_NEW = "Ram (2019+ new body)";
+  const SITE = "https://www.linkswellinc.com/product/";
 
-    ["xl", "2014–2018 Dodge Ram", "13-18 Ram XL Radio.pdf", 6.96],
-    ["xl", "2019+ Dodge Ram", "19-Up Ram XL Radio.pdf", 6.96],
-    ["xl", "2019–2020 Ford Expedition", "Expedition Xl Radio.pdf", 6.89],
-    ["xl", "2015–2020 Ford F150 · 2017–2020 Super Duty", "F-Series XL Radio.pdf", 6.89],
-    ["xl", "2018+ Jeep Wrangler · 2020+ Gladiator", "Jeep XL Radio.pdf", 7.21],
-    ["xl", "2014–2018 Chevy Silverado", "Silverado T-Style XL.pdf", 6.80],
+  // Product list from linkswellinc.com (Nov 2026). fits: [make, model, firstYear, lastYear]
+  const PRODUCTS = [
+    // T-Style XL
+    { line: "xl", title: "2013–2018 Ram (incl. 2019–2024 Classic)", fits: [["Ram", RAM_OLD, 2013, 2024]],
+      manual: "13-18 Ram XL Radio.pdf", fw: "gen6xl", url: "2013-2018-2019-2024-classic-dodge-ram-t-style-xl-radio/" },
+    { line: "xl", title: "2014–2018 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]],
+      manual: "Silverado T-Style XL.pdf", fw: "gen6xl", url: "2014-2018-chevy-silverado-gmc-sierra-t-style-xl-radio/" },
+    { line: "xl", title: "2015–2020 Tahoe / Suburban / Yukon / Denali", fits: [["Chevrolet", "Tahoe", 2015, 2020], ["Chevrolet", "Suburban", 2015, 2020], ["GMC", "Yukon / Yukon Denali", 2015, 2020]],
+      manual: null, fw: "gen6xl", url: "2015-2020-tahoe-suburban-gmc-yukon-denali-t-style-xl-radio/" },
+    { line: "xl", title: "2015–2020 Ford F-150 · 2017–2022 Super Duty", fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2022]],
+      manual: "F-Series XL Radio.pdf", fw: "gen6xl", url: "2015-2020-ford-f-150-2017-2022-super-duty-t-style-xl/" },
+    { line: "xl", title: "2018–2022 Ford Expedition", fits: [["Ford", "Expedition", 2018, 2022]],
+      manual: "Expedition Xl Radio.pdf", fw: "gen6xl", url: "2018-2022-ford-expedition-t-style-xl/",
+      note: "Manual cover lists 2019–2020 only." },
+    { line: "xl", title: "2018–2023 Jeep Wrangler JL · Gladiator JT", fits: [["Jeep", "Wrangler JL", 2018, 2023], ["Jeep", "Gladiator JT", 2020, 2023]],
+      manual: "Jeep XL Radio.pdf", fw: "gen6xl", url: "2018-2023-jeep-wrangler-jl-gladiator-jt-t-style-xl-radio/" },
+    { line: "xl", title: "2019–2023 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2019, 2023], ["GMC", "Sierra", 2019, 2023]],
+      manual: null, fw: "gm19xl", url: "2019-2023_chevy_silverado_gmc_sierra-t-style-xl-radio/",
+      note: "Uses its own firmware, not the Gen 6/XL update." },
+    { line: "xl", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
+      manual: "19-Up Ram XL Radio.pdf", fw: "gen6xl", url: "2019-2024-dodge-ram-t-style-xl-radio/" },
+    { line: "xl", title: "Universal T-Style XL", fits: [],
+      manual: null, fw: "gen6xl", url: "universal-t-style-xl-radio/" },
 
-    ["lite2", "2014–2018 Chevy Silverado / GMC Sierra", "Linkswell-Lite2 14-18-GMC-Manual.pdf", 5.07],
-    ["lite2", "2014–2018 Dodge Ram", "Linkswell-Lite2 18 Ram-Manual.pdf", 4.98],
-    ["lite2", "2019+ Dodge Ram 1500/2500/3500", "Linkswell-Lite2 19 Ram-Manual.pdf", 5.01],
-    ["lite2", "2015–2020 Ford F150 · 2017–2020 Super Duty", "Linkswell-Lite2 F150 Manual.pdf", 5.07],
-    ["lite2", "2015–2020 Ford Mustang", "Linkswell-Lite2 Mustang-Manual.pdf", 5.03],
-    ["lite2", "2014–2023 Toyota Tundra", "Linkswell-Lite2 Tundra-Manual.pdf", 5.06],
+    // Gen 6
+    { line: "gen6", title: "2005–2015 Toyota Tacoma", fits: [["Toyota", "Tacoma", 2005, 2015]],
+      manual: null, fw: "gen6xl", url: "2005-2015-toyota-tacoma-6-t-style-radio/" },
+    { line: "gen6", title: "2010–2014 Ford Mustang", fits: [["Ford", "Mustang", 2010, 2014]],
+      manual: null, fw: "gen6xl", url: "2010-2014-ford-mustang-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2013–2014 Ford F-150", fits: [["Ford", "F-150", 2013, 2014]],
+      manual: "13-14 F150 Gen 6 Radio.pdf", fw: "gen6xl", url: "2013-2014-ford-f-150-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2013–2018 Ram, 10\" screen (incl. 2019–2024 Classic)", fits: [["Ram", RAM_OLD, 2013, 2024]],
+      manual: null, fw: "gen6xl", url: "2013-2018-19-24-classic-dodge-ram-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2013–2018 Ram, 12\" screen (incl. 2019–2024 Classic)", fits: [["Ram", RAM_OLD, 2013, 2024]],
+      manual: "13-18 Ram 12\" Gen 6 Radio.pdf", fw: "gen6xl", url: "2013-2018-2019-2024-classic-dodge-ram-12-screen-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2014–2018 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]],
+      manual: "Silverado Gen 6 Radio.pdf", fw: "gen6xl", url: "2014-2018-chevy-silverado-gmc-sierra-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2014–2021 Jeep Grand Cherokee", fits: [["Jeep", "Grand Cherokee", 2014, 2021]],
+      manual: "Grand Cherokee Gen 6 Radio.pdf", fw: "gen6xl", url: "2014-2021-jeep-grand-cherokee-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2014–2022 Toyota Tundra", fits: [["Toyota", "Tundra", 2014, 2022]],
+      manual: "Tundra Gen 6 Radio.pdf", fw: "gen6xl", url: "2014-2022-toyota-tundra-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2015–2020 Ford F-150 · 2017–2023 Super Duty", fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2023]],
+      manual: "F-Series Gen 6 Radio.pdf", fw: "gen6xl", url: "2015-2020-f-150-2017-2023-super-duty-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2015–2023 Ford Mustang", fits: [["Ford", "Mustang", 2015, 2023]],
+      manual: "Mustang Gen 6 Radio.pdf", fw: "gen6xl", url: "2015-2023-ford-mustang-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2016–2023 Toyota Tacoma", fits: [["Toyota", "Tacoma", 2016, 2023]],
+      manual: "Tacoma Gen 6 Radio.pdf", fw: "gen6xl", url: "2016-2023-toyota-tacoma-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2018–2021 Ford Expedition", fits: [["Ford", "Expedition", 2018, 2021]],
+      manual: "Expedition Gen 6 Radio.pdf", fw: "gen6xl", url: "2018-2021-ford-expedition-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2018–2023 Ford Ranger", fits: [["Ford", "Ranger", 2018, 2023]],
+      manual: "Ranger Gen 6 Radio.pdf", fw: "gen6xl", url: "2018-2023-ford-ranger-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2018–2023 Jeep Wrangler JL · Gladiator JT", fits: [["Jeep", "Wrangler JL", 2018, 2023], ["Jeep", "Gladiator JT", 2020, 2023]],
+      manual: "Jeep Wrangler Gen 6 Radio.pdf", fw: "gen6xl", url: "2018-2023-jeep-wrangler-jl-gladiator-jt-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
+      manual: null, fw: "gen6xl", url: "2019-2024-dodge-ram-generation-6-t-style-radio/" },
+    { line: "gen6", title: "2007–2014 Cadillac", fits: [["Cadillac", "2007–2014 models", 2007, 2014]],
+      manual: "Cadillac Gen 6 Radio.pdf", fw: "gen6xl", url: null,
+      note: "Not in LinksWell's current product list." },
 
-    ["gm", "GM i05 / i06 / i0B Multi-Camera Interface", "GM Multi Camera Manual.pdf", 29.29],
+    // Lite 2
+    { line: "lite2", title: "2013–2014 Ford F-150", fits: [["Ford", "F-150", 2013, 2014]],
+      manual: null, fw: "lite2", url: "2013-2014-ford-f-150-t-style-lite-2/" },
+    { line: "lite2", title: "2013–2018 Ram", fits: [["Ram", RAM_OLD, 2013, 2018]],
+      manual: "Linkswell-Lite2 18 Ram-Manual.pdf", fw: "lite2", url: "2013-2018-dodge-ram-t-style-lite-2/" },
+    { line: "lite2", title: "2014–2018 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]],
+      manual: "Linkswell-Lite2 14-18-GMC-Manual.pdf", fw: "lite2", url: "2014-2018-sierra-silverado-t-style-lite-2/" },
+    { line: "lite2", title: "2014–2022 Toyota Tundra", fits: [["Toyota", "Tundra", 2014, 2022]],
+      manual: "Linkswell-Lite2 Tundra-Manual.pdf", fw: "lite2", url: "2014-2022-toyota-tundra-t-style-lite-2/" },
+    { line: "lite2", title: "2015–2020 Ford F-150 · 2017–2023 Super Duty", fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2023]],
+      manual: "Linkswell-Lite2 F150 Manual.pdf", fw: "lite2", url: "2015-2020-f-150-2017-2023-super-duty-t-style-lite-2/" },
+    { line: "lite2", title: "2015–2023 Ford Mustang", fits: [["Ford", "Mustang", 2015, 2023]],
+      manual: "Linkswell-Lite2 Mustang-Manual.pdf", fw: "lite2", url: "2015-2023-ford-mustang-t-style-lite-2/" },
+    { line: "lite2", title: "2018–2023 Ford Ranger", fits: [["Ford", "Ranger", 2018, 2023]],
+      manual: null, fw: "lite2", url: "2018-2023-ford-ranger-t-style-lite-2/" },
+    { line: "lite2", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
+      manual: "Linkswell-Lite2 19 Ram-Manual.pdf", fw: "lite2", url: "2019-2024-dodge-ram-t-style-lite-2y/" },
+    { line: "lite2", title: "2019–2023 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2019, 2023], ["GMC", "Sierra", 2019, 2023]],
+      manual: null, fw: "lite2", url: "2019-2023-sierra-silverado-t-style-lite-2/" },
+  ];
 
-    ["sync3", "Ford SYNC 3 Multi-Camera Interface (S2H003A-Y02E)", "SYNC 3 Multi Camera Manual.pdf", 9.02],
-  ].map(([line, title, file, mb]) => ({ line, title, file, mb }));
+  // Firmware as posted on linkswellinc.com support pages
+  const FIRMWARE = [
+    { id: "gen6xl", name: "Gen 6 & T-Style XL", color: "var(--xl)", asOf: "LinksWell page dated 08/03/2026",
+      src: "https://www.linkswellinc.com/gen-6-xl-t-style-radio-firmware-updates/",
+      intro: "Update the APP and the MCU as two separate updates. Use a USB drive of 32 GB or smaller, formatted FAT32. Download each file directly; a copied file may not be recognized.",
+      parts: [
+        { h: "1. APP update", ver: "2025-10-23", file: "update_e.zip",
+          href: "https://www.dropbox.com/scl/fi/vv0ydstdszktigcwapuh4/update_e.zip?rlkey=e3e6zdsjwjlzgtrna08ahsjmi&dl=0",
+          steps: ["Copy update_e.zip (still zipped) to the root of an empty FAT32 USB drive.",
+                  "Start the vehicle and let the radio boot. Remove any other USB devices.",
+                  "Plug in the USB drive and press Yes when the update prompt appears.",
+                  "Let the radio reboot completely."] },
+        { h: "2. MCU update", ver: "F059MV", file: "RL9A.bin",
+          href: "https://www.dropbox.com/scl/fi/rular7lteeodeez88f9m3/RL9A.bin?rlkey=phtnrfa308cn80nnj8c0u5gzk&dl=0",
+          steps: ["Reformat the USB drive to FAT32 and copy RL9A.bin to it.",
+                  "With the vehicle on, plug in the USB drive.",
+                  "Settings → System → Factory settings → enter 1660 → OK → Upgrade → MCU → OK.",
+                  "After the reboot, the MCU version should end in F059MV."] },
+      ] },
+    { id: "gm19xl", name: "T-Style XL, 2019+ Silverado / Sierra", color: "var(--xl)", asOf: "LinksWell page dated 10/02/2026",
+      src: "https://www.linkswellinc.com/2019-gm-silverado-sierra-xl-t-style-radio-firmware-updates/",
+      intro: "This radio uses its own firmware. Note: the USB drive must be formatted NTFS for the APP/MCU update, not FAT32. The Work Truck trim uses a different CAN box file.",
+      parts: [
+        { h: "1. APP / MCU update", ver: "July 30 2026", file: "APP Update folder",
+          href: "https://www.dropbox.com/scl/fo/zhi3n25l4prrtyezsf0cs/ABmp6SL25fjnm1yuYubtkdA?rlkey=sb1hm3mflp5wwmvbuzkswagc6&dl=0",
+          steps: ["Format the USB drive NTFS. Unzip the download and copy all files and the folder to the root.",
+                  "Start the truck, let the radio boot, remove other USB devices, then plug in the drive.",
+                  "Press Yes at the update prompt.",
+                  "When it says “Unplug the USB Disk”, remove the drive and let it reboot completely."] },
+        { h: "2a. CAN box update (standard trims)", ver: "GM-SS-10 V3.02.010BYPJ", file: "simplecanupdate.bin",
+          href: "https://www.dropbox.com/scl/fi/m3ptlkdjwu446ex08qt8h/simplecanupdate.bin?rlkey=06208woofld59ifju50z5u9nw&dl=0",
+          steps: ["Fixes 360-camera issues (2026-07-14). Follow LinksWell's CAN box video below."] },
+        { h: "2b. CAN box update (Work Truck)", ver: "RP1-GM-004 V1.01.100BYPS", file: "simplecanupdate.bin",
+          href: "https://www.dropbox.com/scl/fi/b446vw7h4kwu1a8ui4tnz/simplecanupdate.bin?rlkey=e30zebm7bxgzps0camhza38dp&dl=0",
+          steps: ["Same file name as the standard version, so keep them in separate places."] },
+        { h: "How-to video: CAN box update", ver: "", file: "How-to-update-the-can-box.mp4",
+          href: "https://www.dropbox.com/scl/fi/4nxr35qkfld8oq4a64rwf/How-to-update-the-can-box.mp4?rlkey=biu2zj2gptg3uoy2n1incbfel&dl=0",
+          steps: [] },
+        { h: "3. CANBUS app (APK)", ver: "v3.10.86", file: "CANBUS-SPD-6490 APK",
+          href: "https://www.dropbox.com/scl/fi/lt504wosv5c900lx01hw1/CANBUS-SPD-6490_produce_2026_07_14_10_44_v3.10.86_vc176.apk?rlkey=uwjp7jsmxy8duxm2odx1jrrq6&dl=0",
+          steps: ["Copy the APK to a USB drive and plug it into the running radio (no other USB devices).",
+                  "File Manager → ☰ → your USB → tap the APK → allow unknown apps → Install."] },
+      ] },
+    { id: "lite2", name: "Lite 2", color: "var(--lite2)", asOf: "LinksWell page dated 08/03/2026",
+      src: "https://www.linkswellinc.com/lite-2-t-style-radio-firmware-updates/",
+      intro: "Do these in order: MCU first, then the APP, then the boot logo. Use a FAT32 USB drive with each file in the root.",
+      parts: [
+        { h: "1. MCU update", ver: "SO19", file: "RLC0.bin",
+          href: "https://www.dropbox.com/scl/fi/tfbrljj1k1tw72mvm3fr8/RLC0.bin?rlkey=p7o15kthm939p1vg6439kxxj8&dl=0",
+          steps: ["Copy RLC0.bin to the USB drive and plug it in.",
+                  "Gear icon → System → Software version → tap “Device name” 6–7 times.",
+                  "Tap “MCU Upgrade” (a red progress bar appears). The radio reboots on its own.",
+                  "Check that the MCU version ends in SO19."] },
+        { h: "2. APP update", ver: "20260711", file: "update13.zip",
+          href: "https://www.dropbox.com/scl/fi/09vvh61qpupzm9qedyfms/update13.zip?rlkey=13ltzbooyyx1tzk88oehgpir8&dl=0",
+          steps: ["Copy update13.zip to the USB drive and plug it in.",
+                  "Press Upgrade and check that the progress bar is green. If no bar appears, stop and try again.",
+                  "After the reboot, the APP version should start with 20260711."] },
+        { h: "3. Boot logo animation", ver: "", file: "Boot logo folder",
+          href: "https://www.dropbox.com/scl/fo/8kcz2vnzodxmb7d0p1x0f/ACUU3HT2tnRpZ-cFv_l4G0U?rlkey=zdy0cv73zaftemsu53zeje8o5&dl=0",
+          steps: ["Copy both logo files to the USB drive and plug it in.",
+                  "Gear icon → User → Boot animation → Sure.",
+                  "Boot screen → ☰ → your USB → pick the Linkswell logo."] },
+      ] },
+  ];
 
-  const list = document.getElementById("list");
-  const q = document.getElementById("q");
-  const chips = document.getElementById("chips");
-  const count = document.getElementById("count");
-  let activeLine = "all";
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const lineOf = (id) => LINES.find(l => l.id === id);
+  const manualHref = (p) => encodeURI(lineOf(p.line).folder + "/" + p.manual);
+  const fwOf = (id) => FIRMWARE.find(f => f.id === id);
 
-  const href = (m) => encodeURI(LINES.find(l => l.id === m.line).folder + "/" + m.file);
-  const esc = (s) => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const state = { make: "", model: "", year: "", line: "all" };
+  const uniq = (a) => [...new Set(a)];
+  const allFits = PRODUCTS.flatMap(p => p.fits);
 
+  function fillSelect(el, placeholder, values) {
+    el.innerHTML = `<option value="">${placeholder}</option>` + values.map(v => `<option>${esc(v)}</option>`).join("");
+    el.disabled = values.length === 0;
+  }
+  function refreshSelects() {
+    fillSelect($("make"), "Any make", uniq(allFits.map(f => f[0])).sort());
+    $("make").value = state.make;
+    const models = state.make ? uniq(allFits.filter(f => f[0] === state.make).map(f => f[1])).sort() : [];
+    fillSelect($("model"), "Any model", models);
+    $("model").value = state.model;
+    let years = [];
+    if (state.make) {
+      allFits.filter(f => f[0] === state.make && (!state.model || f[1] === state.model))
+        .forEach(([, , a, b]) => { for (let y = a; y <= b; y++) years.push(y); });
+    }
+    fillSelect($("year"), "Any year", uniq(years).sort((a, b) => b - a));
+    $("year").value = state.year;
+  }
+
+  function fitsVehicle(p) {
+    if (!state.make) return true;
+    return p.fits.some(([mk, md, a, b]) =>
+      mk === state.make && (!state.model || md === state.model) && (!state.year || (+state.year >= a && +state.year <= b)));
+  }
+  function matchesSearch(p) {
+    const terms = $("q").value.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return true;
+    const years = p.fits.flatMap(([, , a, b]) => Array.from({ length: b - a + 1 }, (_, i) => a + i));
+    const hay = [p.title, lineOf(p.line).name, p.manual || "", ...p.fits.map(f => f[0] + " " + f[1])].join(" ").toLowerCase();
+    return terms.every(t => /^\d{4}$/.test(t) ? years.includes(+t) : hay.includes(t));
+  }
+
+  function card(p) {
+    const l = lineOf(p.line);
+    const fw = fwOf(p.fw);
+    const manual = p.manual
+      ? `<a class="btn ghost" href="${manualHref(p)}" target="_blank" rel="noopener">View manual</a>
+         <a class="btn primary" href="${manualHref(p)}" download>Download</a>`
+      : `<span class="nomanual">No manual on file. Check <a href="https://www.linkswellinc.com/support/install-user-manuals/" target="_blank" rel="noopener">LinksWell's manuals page</a>.</span>`;
+    return `<article class="card" style="--line:${l.color}">
+      <div class="badge">${esc(l.name)}</div>
+      <h3>${esc(p.title)}</h3>
+      ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
+      <div class="actions">${manual}</div>
+      <div class="links">
+        <a href="#fw-${fw.id}" data-fw="${fw.id}">Firmware: ${esc(fw.name)}</a>
+        ${p.url ? `<a href="${SITE + p.url}" target="_blank" rel="noopener">Product page ↗</a>` : ""}
+      </div>
+    </article>`;
+  }
+
+  function render() {
+    const shown = PRODUCTS.filter(p => (state.line === "all" || p.line === state.line) && fitsVehicle(p) && matchesSearch(p));
+    $("list").innerHTML = LINES.map(l => {
+      const items = shown.filter(p => p.line === l.id);
+      if (!items.length) return "";
+      return `<section><h2><span class="dot" style="background:${l.color}"></span>${esc(l.name)}</h2>
+        <div class="grid">${items.map(card).join("")}</div></section>`;
+    }).join("") || `<p class="empty">Nothing from XL, Gen 6 or Lite 2 fits that vehicle.</p>`;
+
+    const make = state.model.startsWith(state.make) ? "" : state.make;
+    const vehicle = [state.year, make, state.model].filter(Boolean).join(" ");
+    const withManual = shown.filter(p => p.manual).length;
+    $("summary").textContent = shown.length
+      ? `${shown.length} product${shown.length > 1 ? "s" : ""}${vehicle ? " fit " + vehicle : ""} · ${withManual} with a manual`
+      : "";
+  }
+
+  // firmware panels
+  $("fwlist").innerHTML = FIRMWARE.map(f => `
+    <details class="fw" id="fw-${f.id}" style="--line:${f.color}">
+      <summary>${esc(f.name)} <small>· ${esc(f.asOf)}</small></summary>
+      <div class="fw-body">
+        <p>${esc(f.intro)}</p>
+        ${f.parts.map(pt => `
+          <h4>${esc(pt.h)}${pt.ver ? ` <span class="ver">${esc(pt.ver)}</span>` : ""}</h4>
+          <a class="fw-dl" href="${pt.href}" target="_blank" rel="noopener">Download ${esc(pt.file)} ↗</a>
+          ${pt.steps.length ? `<ol>${pt.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}`).join("")}
+        <p class="src">Always check <a href="${f.src}" target="_blank" rel="noopener">LinksWell's firmware page</a> for newer versions before updating.</p>
+      </div>
+    </details>`).join("");
+
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-fw]");
+    if (!a) return;
+    const d = $("fw-" + a.dataset.fw);
+    d.open = true;
+  });
+
+  // product line chips
   [{ id: "all", name: "All" }, ...LINES].forEach(l => {
     const b = document.createElement("button");
     b.className = "chip";
+    b.type = "button";
     b.textContent = l.name;
     b.dataset.line = l.id;
     b.setAttribute("aria-pressed", l.id === "all");
     b.onclick = () => {
-      activeLine = l.id;
-      chips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.line === l.id));
+      state.line = l.id;
+      $("chips").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.line === l.id));
       render();
     };
-    chips.appendChild(b);
+    $("chips").appendChild(b);
   });
 
-  function render() {
-    const terms = q.value.toLowerCase().split(/\s+/).filter(Boolean);
-    const matches = (m) => {
-      const hay = (m.title + " " + m.file + " " + LINES.find(l => l.id === m.line).name).toLowerCase();
-      return terms.every(t => hay.includes(t));
-    };
-    let shown = 0;
-    list.innerHTML = LINES
-      .filter(l => activeLine === "all" || activeLine === l.id)
-      .map(l => {
-        const items = MANUALS.filter(m => m.line === l.id && matches(m));
-        if (!items.length) return "";
-        shown += items.length;
-        return `<section>
-          <h2>${esc(l.name)}</h2>
-          <p class="sub">${items.length} manual${items.length > 1 ? "s" : ""}</p>
-          <div class="grid">${items.map(m => `
-            <article class="card">
-              <h3>${esc(m.title)}</h3>
-              <div class="meta">PDF · ${m.mb.toFixed(1)} MB</div>
-              <div class="actions">
-                <a class="btn ghost" href="${href(m)}" target="_blank" rel="noopener">View</a>
-                <a class="btn primary" href="${href(m)}" download>Download</a>
-              </div>
-            </article>`).join("")}
-          </div>
-        </section>`;
-      }).join("") || `<p class="empty">No manuals match “${esc(q.value)}”.</p>`;
-    count.textContent = shown === MANUALS.length
-      ? `${MANUALS.length} manuals for LinksWell radios and camera interfaces`
-      : `Showing ${shown} of ${MANUALS.length} manuals`;
-  }
+  $("make").onchange = (e) => { state.make = e.target.value; state.model = ""; state.year = ""; refreshSelects(); render(); };
+  $("model").onchange = (e) => { state.model = e.target.value; state.year = ""; refreshSelects(); render(); };
+  $("year").onchange = (e) => { state.year = e.target.value; render(); };
+  $("q").addEventListener("input", render);
+  $("reset").onclick = () => {
+    Object.assign(state, { make: "", model: "", year: "" });
+    $("q").value = "";
+    refreshSelects(); render();
+  };
 
-  q.addEventListener("input", render);
+  refreshSelects();
   render();
 </script>
 </body>
