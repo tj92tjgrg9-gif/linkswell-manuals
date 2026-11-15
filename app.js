@@ -16,16 +16,20 @@ const lineOf = (id) => LINES.find(l => l.id === id);
 const fwOf = (id) => FIRMWARE.find(f => f.id === id);
 
 // ---------- data prep ----------
+// Radios Best Buy doesn't carry stay in data.js (hidden: true) but are left off the site.
+for (let i = PRODUCTS.length - 1; i >= 0; i--) if (PRODUCTS[i].hidden) PRODUCTS.splice(i, 1);
 PRODUCTS.forEach(p => {
-  p.slug = p.url ? p.url.replace(/\/$/, "") : "gen6-cadillac-2007-2014";
+  p.slug = p.slug || p.url.replace(/\/$/, "");
   p.cat = CATALOG[p.slug] || { images: [], specs: [], notes: [], videos: [], model: "", headline: "" };
   const m = (p.cat.headline || p.cat.specs[0]?.t || "").match(/([\d.]+)\s*[″"]/);
   p.screen = m ? m[1] : "";
   p.firstYear = Math.min(...p.fits.map(f => f[2]).concat(9999));
   p.manualHref = p.manual ? encodeURI(lineOf(p.line).folder + "/" + p.manual) : "";
+  p.model = p.vpn || p.cat.model || "";
 });
-ACCESSORIES.forEach(a => { a.cat = CATALOG[a.url.replace(/\/$/, "")] || { images: [], specs: [], notes: [], videos: [] }; });
+ACCESSORIES.forEach(a => { a.cat = (a.url && CATALOG[a.url.replace(/\/$/, "")]) || { images: [], specs: [], notes: [], videos: [] }; });
 const allFits = PRODUCTS.flatMap(p => p.fits);
+const requiredFirst = (list) => list.sort((a, b) => (b.required ? 1 : 0) - (a.required ? 1 : 0));
 
 // ---------- vehicle + fitment ----------
 function vehicleFrom(params) {
@@ -102,7 +106,8 @@ function productTile(p, v) {
     <div class="tile-body">
       ${badge(p.line)}
       <h3>${esc(p.title)}</h3>
-      <div class="muted small">${esc(p.cat.headline || "")}${p.cat.model ? ` · <span class="sku">${esc(p.cat.model)}</span>` : ""}</div>
+      <div class="muted small">${p.cat.headline ? esc(p.cat.headline) + " · " : ""}<span class="sku">${esc(p.model)}</span></div>
+      ${p.bb ? `<div class="bbsku">Best Buy SKU <strong>${esc(p.bb)}</strong></div>` : ""}
       <div class="tile-flags">${p.manual ? `<span class="flag ok">Install manual</span>` : `<span class="flag">No manual on file</span>`}${p.cat.notes.length || p.note ? `<span class="flag warn">Install notes</span>` : ""}</div>
     </div>
   </a>`;
@@ -113,14 +118,15 @@ function accTile(a, v) {
     <div class="tile-body">
       <span class="lbadge" style="--line:var(--muted)">${a.required ? "Required for some installs" : "Accessory"}</span>
       <h3>${esc(a.name)}</h3>
-      <div class="muted small"><span class="sku">${esc(a.sku)}</span></div>
+      <div class="muted small"><span class="sku">${esc(a.bbVpn || a.sku)}</span></div>
+      ${a.bb ? `<div class="bbsku">Best Buy SKU <strong>${esc(a.bb)}</strong></div>` : ""}
       <div class="muted small">${esc(a.fits.length ? yearSpan(a.fits) : "Any vehicle")}</div>
     </div>
   </a>`;
 }
 
-function faqItem(f, v) {
-  const accLinks = (f.acc || []).map(sku => {
+function faqItem(f, v, p) {
+  const accLinks = (f.acc || []).filter(sku => !p || appliesTo(ACCESSORIES.find(x => x.sku === sku), p, v)).map(sku => {
     const a = ACCESSORIES.find(x => x.sku === sku);
     return `<a href="#/a/${encodeURIComponent(sku)}${vehicleQuery(v)}">${esc(a.name)}</a> <span class="sku">${esc(sku)}</span>`;
   });
@@ -226,7 +232,7 @@ function viewShop(params) {
 
   // radios matching vehicle + search (before sidebar filters, for counts)
   const baseRadios = PRODUCTS.filter(p => fitsVehicle(p.fits, v) &&
-    textMatch([p.title, lineOf(p.line).name, LINE_FULL[p.line], p.cat.model, p.cat.headline, ...p.fits.map(f => f[0] + " " + f[1])].join(" "),
+    textMatch([p.title, lineOf(p.line).name, LINE_FULL[p.line], p.model, p.cat.model, p.bb, p.cat.headline, ...p.fits.map(f => f[0] + " " + f[1])].join(" "),
       y => p.fits.some(f => y >= f[2] && y <= f[3])));
   let radios = baseRadios.filter(p => (!lines.length || lines.includes(p.line)) && (!screens.length || screens.includes(p.screen)) && (!manualOnly || p.manual));
   if (sort === "screen") radios.sort((a, b) => (+b.screen || 0) - (+a.screen || 0));
@@ -236,7 +242,8 @@ function viewShop(params) {
   // accessories that fit this vehicle (via any matching radio)
   const vehRadios = PRODUCTS.filter(p => fitsVehicle(p.fits, v));
   let accs = ACCESSORIES.filter(a => vehRadios.some(p => appliesTo(a, p, v)) &&
-    textMatch([a.name, a.sku, a.what, ...a.fits.map(f => f[0] + " " + f[1])].join(" "), y => !a.fits.length || a.fits.some(f => y >= f[2] && y <= f[3])));
+    textMatch([a.name, a.sku, a.bbVpn, a.bb, a.what, ...a.fits.map(f => f[0] + " " + f[1])].join(" "), y => !a.fits.length || a.fits.some(f => y >= f[2] && y <= f[3])));
+  requiredFirst(accs);
   if (lines.length) accs = accs.filter(a => PRODUCTS.some(p => lines.includes(p.line) && fitsVehicle(p.fits, v) && appliesTo(a, p, v)));
 
   const set = (changes) => {
@@ -305,9 +312,9 @@ function viewProduct(slug, params) {
   const v = vehicleFrom(params);
   const c = p.cat;
   const fw = fwOf(p.fw);
-  const accs = ACCESSORIES.filter(a => appliesTo(a, p, v));
+  const accs = requiredFirst(ACCESSORIES.filter(a => appliesTo(a, p, v)));
   const faqs = FAQS.filter(f => appliesTo(f, p, v));
-  const notes = [p.note, ...c.notes].filter(Boolean);
+  const notes = [p.note, p.vpnNote, ...c.notes].filter(Boolean);
   const fit = hasVehicle(v) ? fitsVehicle(p.fits, v) : null;
   document.title = `${p.title} ${LINE_FULL[p.line]} · Linkswell`;
 
@@ -318,7 +325,8 @@ function viewProduct(slug, params) {
       <div class="pdp-info">
         ${badge(p.line)}
         <h1>${esc(LINE_FULL[p.line])} for ${esc(p.title)}</h1>
-        <div class="muted">${c.model ? `Model <span class="sku">${esc(c.model)}</span>` : ""}${c.headline ? ` · ${esc(c.headline)}` : ""}</div>
+        <div class="muted">${p.model ? `Model <span class="sku">${esc(p.model)}</span>` : ""}${c.headline ? ` · ${esc(c.headline)}` : ""}</div>
+        ${p.bb ? `<div class="bbsku big">Best Buy SKU <strong>${esc(p.bb)}</strong></div>` : ""}
         ${fit === null ? "" : fit
           ? `<div class="fitbox ok">✓ Fits ${esc(vehicleLabel(v))}</div>`
           : `<div class="fitbox no">✗ Not listed for ${esc(vehicleLabel(v))}</div>`}
@@ -341,7 +349,7 @@ function viewProduct(slug, params) {
           <div class="dl-btns"><a class="btn ghost small" href="${p.manualHref}" target="_blank" rel="noopener">View</a><a class="btn primary small" href="${p.manualHref}" download>Download</a></div></div>`
           : `<div class="dl"><div><strong>Install manual</strong><div class="muted small">Not on file yet</div></div></div>`}
       </div>
-      ${firmwarePanel(fw, false)}
+      ${fw ? firmwarePanel(fw, false) : `<p class="muted small">No firmware is listed for this radio yet. Check with LinksWell.</p>`}
     </section>
 
     ${accs.length ? `<section class="psec" id="accessories"><h2>Accessories${hasVehicle(v) ? ` for ${esc(vehicleLabel(v))}` : ""}</h2>
@@ -350,7 +358,7 @@ function viewProduct(slug, params) {
     ${faqs.length ? `<section class="psec" id="faqs"><h2>FAQs</h2>
       ${[["fix", "Troubleshooting"], ["buy", "Before you buy"]].map(([k, label]) => {
         const items = faqs.filter(f => f.kind === k);
-        return items.length ? `<h3>${label}</h3>` + items.map(f => faqItem(f, v)).join("") : "";
+        return items.length ? `<h3>${label}</h3>` + items.map(f => faqItem(f, v, p)).join("") : "";
       }).join("")}
       <p class="muted small">From LinksWell's FAQs, reworded. Settings paths are for the current menu and may differ on Lite 2.</p></section>` : ""}
 
@@ -375,7 +383,8 @@ function viewAccessory(sku, params) {
       <div class="pdp-info">
         <span class="lbadge" style="--line:var(--muted)">${a.required ? "Required for some installs" : "Accessory"}</span>
         <h1>${esc(a.name)}</h1>
-        <div class="muted">Part <span class="sku">${esc(a.sku)}</span></div>
+        <div class="muted">Part <span class="sku">${esc(a.bbVpn || a.sku)}</span>${a.bbVpn ? ` <span class="small">(LinksWell's site: ${esc(a.sku)})</span>` : ""}</div>
+        ${a.bb ? `<div class="bbsku big">Best Buy SKU <strong>${esc(a.bb)}</strong></div>` : ""}
         <p>${esc(a.what)}</p>
         <div class="fits"><strong>Fits:</strong> ${esc(a.fits.length ? yearSpan(a.fits) : "Any vehicle")}</div>
         <div class="fits"><strong>Radios:</strong> ${esc(a.lines ? a.lines.map(id => lineOf(id).name).join(", ") + " only" : "T-Style radios (LinksWell doesn't list which generations)")}</div>
@@ -386,7 +395,7 @@ function viewAccessory(sku, params) {
     ${radios.length ? `<section class="psec"><h2>Works with${hasVehicle(v) ? ` (${esc(vehicleLabel(v))})` : ""}</h2><div class="grid">${radios.map(p => productTile(p, v)).join("")}</div></section>` : ""}
     ${faqs.length ? `<section class="psec"><h2>Related FAQs</h2>${faqs.map(f => faqItem(f, v)).join("")}</section>` : ""}
     ${c.videos.length ? `<section class="psec"><h2>Videos</h2>${videos(c.videos)}</section>` : ""}
-    <p class="muted small source">Photos from <a href="${SITE + a.url}" target="_blank" rel="noopener">LinksWell's product page ↗</a></p>`;
+    ${a.url ? `<p class="muted small source">Photos from <a href="${SITE + a.url}" target="_blank" rel="noopener">LinksWell's product page ↗</a></p>` : `<p class="muted small source">LinksWell has no product page for this part, so there are no photos or specs.</p>`}`;
   wireGallery(app());
 }
 
