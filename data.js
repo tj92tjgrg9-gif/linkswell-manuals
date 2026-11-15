@@ -218,8 +218,12 @@ const ACCESSORIES = [
     fits: [["Ford", "Ranger", 2018, 2023]], lines: null,
     note: "Only for trucks with factory B&O audio." },
   { sku: "JPJLMCADPT", bb: "6695664", name: "Jeep Multi-Camera Upgrade",
-    what: "LinksWell's Jeep XL page lists it as an option that adds 6 camera inputs, triggered by the CAN bus and shown on screen.",
-    fits: JEEP, lines: null },
+    what: "Multi-camera module (LinksWell MC-7) for Wrangler JL and Gladiator JT. Connects up to 6 cameras, with on-screen icons to switch between them.",
+    fits: JEEP, lines: null,
+    note: "Must be turned on in the radio settings after install (see Setup below, or the Jeep FAQ).",
+    images: ["https://www.adcmobile.com/wp-content/uploads/2022/11/JPJLMCADPT1-1000x750-1.jpg.webp", "https://www.adcmobile.com/wp-content/uploads/2022/11/JPJLMCADPT1000x750.jpg"],
+    specs: ["Connects up to 6 cameras (adds up to 5 to the existing camera)", "Camera controls appear as icons on the radio screen", "Left, right and rear cameras switch on automatically with the turn signals and reverse; other cameras switch manually", "Works with all LinksWell Jeep JL T-Style radios (Wrangler and Gladiator)", "Setup: Settings → System → Setting Guide → Camera Switch → turn on Multi-Cam (Factory 360 must be off) → Save & Reboot", "1-year warranty"],
+    source: ["https://www.adcmobile.com/product/jeep-multi-cam-module-for-aftermarket-cameras-jpjlmcadpt/", "ADC Mobile"] },
   { sku: "DGPUMIRADPT", bb: "6695617", name: "Dodge Camera Image Relocation Cable",
     what: "Camera relocation cable for Ram trucks.",
     fits: [["Ram", RAM_OLD, 2013, 2024], ["Ram", RAM_NEW, 2019, 2024]], lines: null,
@@ -341,6 +345,11 @@ const FAQS = [
     link: [CLIMATE_GUIDE.ramTundra, "Ram/Tundra climate setup guide"] },
   { id: "r-audio", kind: "fix", fits: RAM_T, q: "Ram: no audio after install",
     a: "Check the HI/LO audio plug on the main power harness. The white “Dodge Ram Audio Output” connector must go into “Dodge Ram HI Audio” for Alpine systems or “Dodge Ram LO Audio” for standard audio. All three plugs are on the main harness." },
+
+  // Jeep Wrangler JL / Gladiator JT
+  { id: "j-multicam", kind: "fix", fits: JEEP, q: "Jeep: multi-cam module (JPJLMCADPT) cameras don't show",
+    a: "The multi-cam module has to be turned on in the radio after install:",
+    steps: ["Settings → System → Setting Guide → Camera Switch.", "Turn on Multi-Cam and make sure Factory 360 is off.", "Save and Reboot."], acc: ["JPJLMCADPT"] },
 
   // Toyota Tundra
   { id: "t-lose", kind: "buy", fits: TUNDRA, q: "Tundra: what factory features are lost?",

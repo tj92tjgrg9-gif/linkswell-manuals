@@ -413,6 +413,7 @@ function viewSupport(anchor) {
     ["Chevy Silverado / GMC Sierra (2014–18)", f => f.fits.some(x => x[0] === "Chevrolet")],
     ["Ram (2013–18 / Classic)", f => f.fits.some(x => x[0] === "Ram")],
     ["Toyota Tundra", f => f.fits.some(x => x[0] === "Toyota")],
+    ["Jeep Wrangler JL / Gladiator JT", f => f.fits.some(x => x[0] === "Jeep")],
   ];
   app().innerHTML = `
     ${crumbs([["#/", "Home"], ["", "Support"]])}
