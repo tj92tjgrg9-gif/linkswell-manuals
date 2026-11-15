@@ -182,7 +182,6 @@ function viewHome() {
   app().innerHTML = `
     <section class="hero">
       <h1>What vehicle are you working on?</h1>
-      <p class="muted">Pick the vehicle to see every XL, Gen 6 and Lite 2 radio that fits, with manuals, accessories, FAQs and firmware.</p>
       <form class="vbar" id="homeform">
         ${vehicleSelects(v, "h")}
         <button class="btn primary" type="submit">Show radios</button>
