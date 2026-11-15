@@ -112,8 +112,8 @@ const ACCESSORIES = [
     url: "ford-superduty-2020-22adapter/" },
   { sku: "FDPUBOADPT", bb: "6695611", name: "F-150 B&O Audio Harness Adapter",
     what: "Replaces the radio's main harness to keep the factory B&O audio. Includes relocation brackets, B&O CAN bus adaptor and T-harness.",
-    fits: [["Ford", "F-150", 2015, 2020]], lines: ["gen6", "xl"],
-    note: "Only for trucks with factory B&O audio.",
+    fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Expedition", 2018, 2022]], lines: ["gen6", "xl"],
+    note: "Only for vehicles with factory B&O audio. LinksWell's Expedition XL and Gen 6 pages name this same adapter for B&O-equipped Expeditions.",
     url: "ford-f-150-bo-audio-harness-adapter/" },
   { sku: "FDSDBOADPT", bb: "6695609", name: "Super Duty B&O Audio Harness Adaptor",
     what: "Replaces the radio's main harness to keep the factory B&O audio. Includes relocation brackets, B&O CAN bus adaptor and T-harness.",
@@ -127,18 +127,18 @@ const ACCESSORIES = [
     url: "factory-ford-360-camera-retention-adaptor/" },
   { sku: "TS-FDPUMCADPT", bb: "6695644", bbVpn: "FDPUMCADPT", name: "Ford F-Series Multi-Camera Interface",
     what: "Adds 7 camera inputs (front, rear, left, right, cargo, trailer, aux), triggered by the vehicle's CAN bus and controlled from the touch screen.",
-    fits: [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]], lines: null,
-    note: "LinksWell lists it for its Ford F-Series T-Style radios without giving years.",
+    fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2023], ["Ford", "Expedition", 2018, 2022]], lines: null,
+    note: "LinksWell names it as an option on its 2015–20 F-150 / Super Duty and Expedition XL pages. Not listed for the 2013–14 F-150.",
     url: "multi-camera-interface-for-the-linkswell-ford-f-series-t-style-radios/" },
   { sku: "FDPUACFLTKIT", bb: "6695650", name: "Ford Fleet Truck Climate Control Adapter",
-    what: "Makes Ford fleet-truck climate controls work with the T-Style radio.",
-    fits: [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]], lines: null,
-    note: "LinksWell says it's for FDED12 radios (e.g. TS-FDED12-4RR). Check the radio's model number. Years aren't listed.",
+    what: "Makes the climate controls in Ford fleet / work trucks work with a T-Style radio. Best Buy calls it the Super Duty work truck climate retention kit.",
+    fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2023]], lines: ["gen6"],
+    note: "Fleet trucks need a different radio: LinksWell's F-150/Super Duty Gen 6 page says to use the TS-FDED12-4RR radio with this harness, not the regular F-Series radio. Best Buy doesn't carry TS-FDED12-4RR, so check with LinksWell before quoting a fleet truck.",
     url: "ts-fdpuacfltkit-ford-fleet-truck-climate-control-adapter/" },
   { sku: "GMPUBSADPT", bb: "6695657", name: "GM Bose Adaptor",
     what: "Plug-and-play interface that keeps the factory Bose (MOST) amplifier and its settings.",
-    fits: GM1418, lines: null,
-    note: "Works only with the LinksWell GM T-Style radio.",
+    fits: [...GM1418, ["Chevrolet", "Tahoe", 2015, 2020], ["Chevrolet", "Suburban", 2015, 2020], ["GMC", "Yukon / Yukon Denali", 2015, 2020]], lines: null,
+    note: "Works only with LinksWell GM T-Style radios. LinksWell's 2014–18 Silverado/Sierra and 2015–20 Tahoe/Suburban/Yukon radio pages both name it for Bose trucks.",
     url: "2014-2018-chevy-silverado-gmc-sierra-bose-adaptor-for-the-t-style-radios/" },
   { sku: "GMPUUSBHDMI", bb: "6695602", name: "GM Dual USB / HDMI / AUX Input Panel",
     what: "Replaces the factory GM USB/SD/AUX hub with 2 USB ports, 1 HDMI port and a 3.5 mm AUX jack with L/R RCA.",
@@ -273,7 +273,7 @@ const ACCESSORIES = [
 // FAQs from linkswellinc.com/faqs (Nov 2026), reworded. LinksWell wrote them for older
 // T-Style generations; answers only for Gen II–IV or the old settings menu are left out.
 // fits: [] = every vehicle. kind: "buy" (before you buy) or "fix" (troubleshooting).
-const FORD_F = [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]];
+const FORD_F = [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2023]];
 const GM_T = [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]];
 const RAM_T = [["Ram", RAM_OLD, 2013, 2024]];
 const TUNDRA = [["Toyota", "Tundra", 2014, 2022]];
