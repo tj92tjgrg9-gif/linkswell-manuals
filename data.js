@@ -31,8 +31,7 @@ const PRODUCTS = [
   { line: "xl", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
     manual: "19-Up Ram XL Radio.pdf", fw: "gen6xl", url: "2019-2024-dodge-ram-t-style-xl-radio/", bb: "6695610", vpn: "XL-DGPU15-6RR-6H" },
   { line: "xl", title: "Universal fit (any vehicle)", fits: [],
-    manual: null, fw: "gen6xl", url: "universal-t-style-xl-radio/", bb: "6695623", vpn: "XL-UNIV15-6RR-6H",
-    note: "Per ExtremeTerrain, which sells this radio as a Bronco option: about 2 hours to install, light to moderate skill, some adaptation may be needed. Their box contents list the HDMI input adapter (LW-TSHMDI-IN) as included, while LinksWell lists it as a separate part, so check the box before ordering one." },
+    manual: null, fw: "gen6xl", url: "universal-t-style-xl-radio/", bb: "6695623", vpn: "XL-UNIV15-6RR-6H" },
 
   // Gen 6
   { line: "gen6", title: "2005–2015 Toyota Tacoma", fits: [["Toyota", "Tacoma", 2005, 2015]],
