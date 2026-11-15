@@ -8,6 +8,7 @@
   :root {
     --bg: #F5F6F8;
     --surface: #FFFFFF;
+    --img-bg: #FFFFFF;
     --text: #1B2330;
     --muted: #5B6575;
     --border: #E2E5EA;
@@ -18,6 +19,10 @@
     --xl: #1D4ED8;
     --gen6: #0F766E;
     --lite2: #B45309;
+    --ok: #15803D;
+    --ok-bg: #E9F7EE;
+    --no: #B42318;
+    --no-bg: #FDECEA;
     --warn-bg: #FFF7E6;
     --warn-text: #8A5A00;
   }
@@ -25,6 +30,7 @@
     :root {
       --bg: #0F141B;
       --surface: #18202B;
+      --img-bg: #F2F3F5;
       --text: #E6E9EE;
       --muted: #9AA4B2;
       --border: #2A3442;
@@ -34,6 +40,10 @@
       --xl: #6E95F5;
       --gen6: #2DD4BF;
       --lite2: #F59E0B;
+      --ok: #4ADE80;
+      --ok-bg: #12291B;
+      --no: #F87171;
+      --no-bg: #2E1515;
       --warn-bg: #2B2414;
       --warn-text: #F3C46B;
     }
@@ -47,731 +57,154 @@
     line-height: 1.45;
   }
   a { color: var(--accent); }
-  header { background: var(--bar); color: var(--bar-text); padding: 28px 16px 24px; }
-  .wrap { max-width: 1040px; margin: 0 auto; }
-  h1 { margin: 0 0 4px; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; }
-  header p { margin: 0; opacity: .75; }
+  h1 { font-size: 1.5rem; line-height: 1.25; margin: 6px 0 8px; letter-spacing: -0.01em; }
+  .muted { color: var(--muted); }
+  .small { font-size: .85rem; }
+  .strong { font-weight: 600; }
+  .sku { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
 
-  .finder {
-    margin: 20px auto 0;
-    padding: 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-  }
-  .finder h2 { margin: 0 0 12px; font-size: 1rem; }
-  .selects { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 10px; align-items: end; }
-  label { display: block; font-size: .8rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
-  select, .search {
-    width: 100%;
-    padding: 10px 12px;
-    font: inherit;
-    color: var(--text);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-  }
-  select:disabled { opacity: .5; }
-  select:focus, .search:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-  .reset {
-    font: inherit; font-size: .9rem;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text);
-    cursor: pointer;
-  }
-  .row2 { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
-  .row2 .search { flex: 1 1 240px; width: auto; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip {
-    font: inherit; font-size: .875rem;
-    padding: 7px 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    cursor: pointer;
-  }
-  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  /* header */
+  .top { background: var(--bar); color: var(--bar-text); position: sticky; top: 0; z-index: 10; }
+  @media (max-width: 640px) { .top { position: static; } }
+  .top .wrap { display: flex; align-items: center; gap: 16px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+  .brand { color: inherit; text-decoration: none; font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
+  .topnav { display: flex; gap: 4px; }
+  .topnav a { color: inherit; text-decoration: none; opacity: .8; padding: 6px 10px; border-radius: 6px; font-size: .92rem; }
+  .topnav a.on, .topnav a:hover { opacity: 1; background: rgba(255,255,255,.12); }
+  #topsearch { flex: 1 1 220px; display: flex; }
+  #topq { flex: 1; min-width: 0; padding: 8px 12px; border-radius: 8px; border: 0; font: inherit; }
+  @media (max-width: 640px) { #topsearch { order: 3; flex-basis: 100%; } }
 
-  main { padding: 0 16px 48px; }
-  .summary { margin: 18px 0 0; color: var(--muted); font-size: .9rem; }
-  section { margin-top: 24px; }
-  section > h2 { font-size: 1.1rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--line);
-    border-radius: 10px;
-    padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .card h3 { margin: 0; font-size: 1rem; font-weight: 600; }
-  .badge { font-size: .75rem; font-weight: 700; color: var(--line); text-transform: uppercase; letter-spacing: .04em; }
-  .note { font-size: .82rem; background: var(--warn-bg); color: var(--warn-text); padding: 6px 8px; border-radius: 6px; }
-  .actions { display: flex; gap: 8px; margin-top: auto; }
-  .btn {
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    font-size: .9rem; font-weight: 600;
-    padding: 8px 10px;
-    border-radius: 7px;
-    border: 1px solid var(--accent);
-  }
+  main { padding-bottom: 56px; }
+  .crumbs { font-size: .85rem; color: var(--muted); margin: 16px 0 8px; }
+  .crumbs a { color: var(--muted); }
+
+  /* buttons + form */
+  .btn { display: inline-block; text-align: center; text-decoration: none; font: inherit; font-weight: 600; font-size: .95rem; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--accent); cursor: pointer; }
   .btn.primary { background: var(--accent); color: #fff; }
-  .btn.ghost { color: var(--accent); background: var(--accent-soft); border-color: transparent; }
-  .btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
-  .nomanual { flex: 1; font-size: .85rem; color: var(--muted); padding: 8px 0; }
-  .links { display: flex; gap: 14px; font-size: .85rem; }
-  .links a { text-decoration: none; font-weight: 600; }
-  .empty { color: var(--muted); padding: 32px 0; text-align: center; }
+  .btn.ghost { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+  .btn.small { padding: 6px 12px; font-size: .85rem; }
+  label { font-size: .8rem; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; }
+  select { width: 100%; padding: 10px 12px; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+  select:disabled { opacity: .5; }
 
-  details.acc { font-size: .85rem; border-top: 1px solid var(--border); padding-top: 8px; }
-  details.acc summary { cursor: pointer; font-weight: 600; color: var(--text); }
-  details.acc ul { margin: 6px 0 0; padding-left: 18px; }
-  details.acc li { margin: 3px 0; }
-  .sku { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8em; color: var(--muted); }
-  #accessories { margin-top: 40px; }
-  #accessories > h2, #firmware > h2 { font-size: 1.25rem; margin-bottom: 4px; }
-  #accessories > p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
-  .acard { --line: var(--muted); }
-  .acard p { margin: 0; font-size: .9rem; }
-  .acard dl { margin: 0; font-size: .85rem; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
-  .acard dt { color: var(--muted); }
-  .acard dd { margin: 0; }
-  .acard:target { outline: 3px solid var(--accent); }
-  #faqs { margin-top: 40px; }
-  #faqs > h2 { font-size: 1.25rem; margin-bottom: 4px; }
-  #faqs > p { margin: 0 0 12px; color: var(--muted); font-size: .9rem; }
-  #faqs h3 { font-size: 1rem; margin: 20px 0 6px; }
-  details.faq {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-top: 8px;
+  /* vehicle bar */
+  .vbar { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 10px; align-items: end; }
+  .vbar.compact { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 16px; }
+  @media (max-width: 640px) { .vbar { grid-template-columns: 1fr 1fr; } .vbar .vsel:first-child, .vbar .btn { grid-column: 1 / -1; } }
+
+  /* home */
+  .hero { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-top: 20px; }
+  .hero h1 { font-size: 1.7rem; margin-top: 0; }
+  .hero p { margin: 0 0 16px; }
+  .h2 { font-size: 1.2rem; margin: 32px 0 12px; }
+  .lines { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .linecard { border-top: 4px solid var(--line) !important; }
+  .support-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .supcard { display: flex; flex-direction: column; gap: 4px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: var(--text); }
+
+  /* tiles */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .tile, .linecard { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text); transition: box-shadow .15s, transform .15s; }
+  .tile:hover, .linecard:hover { box-shadow: 0 6px 18px rgba(0,0,0,.12); transform: translateY(-1px); }
+  .tile-img { position: relative; background: var(--img-bg); aspect-ratio: 4 / 3; overflow: hidden; }
+  .tile-img img { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); object-fit: contain; }
+  .tile-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .tile-body h3 { margin: 2px 0; font-size: .98rem; line-height: 1.3; }
+  .lbadge { align-self: flex-start; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--line); }
+  .tile-flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+  .flag { font-size: .72rem; font-weight: 600; padding: 2px 7px; border-radius: 999px; background: var(--bg); color: var(--muted); }
+  .flag.ok { background: var(--ok-bg); color: var(--ok); }
+  .flag.warn { background: var(--warn-bg); color: var(--warn-text); }
+
+  /* listing */
+  .plp { display: grid; grid-template-columns: 230px 1fr; gap: 20px; align-items: start; }
+  .filters details { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px 14px 12px; position: sticky; top: 72px; }
+  .filters summary { cursor: pointer; font-weight: 700; padding: 10px 0; }
+  .fgroup { border-top: 1px solid var(--border); padding: 10px 0; }
+  .fgroup h4 { margin: 0 0 6px; font-size: .85rem; }
+  .chk { display: flex; align-items: center; gap: 8px; font-size: .9rem; font-weight: 400; color: var(--text); margin: 4px 0; cursor: pointer; }
+  .results-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 12px; }
+  .results-head h1 { margin: 0; flex-basis: 100%; }
+  .sort { display: flex; align-items: center; gap: 8px; margin: 0 0 0 auto; font-weight: 400; }
+  .sort select { width: auto; padding: 6px 10px; }
+  .morebar { display: block; margin-top: 16px; padding: 14px 16px; background: var(--accent-soft); color: var(--accent); border-radius: 10px; text-decoration: none; font-weight: 600; }
+  .empty { color: var(--muted); padding: 32px 0; text-align: center; grid-column: 1 / -1; }
+  @media (max-width: 760px) {
+    .plp { grid-template-columns: 1fr; }
+    .filters details { position: static; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
   }
-  details.faq summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
+
+  /* product page */
+  .pdp { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 4px; }
+  @media (max-width: 800px) { .pdp { grid-template-columns: 1fr; gap: 16px; } }
+  .gallery-main { position: relative; background: var(--img-bg); border: 1px solid var(--border); border-radius: 12px; aspect-ratio: 4 / 3; overflow: hidden; }
+  .gallery-main img { position: absolute; inset: 10px; width: calc(100% - 20px); height: calc(100% - 20px); object-fit: contain; }
+  .thumbs { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; }
+  .thumb { flex: 0 0 72px; height: 56px; padding: 0; border: 2px solid var(--border); border-radius: 8px; background: var(--img-bg); cursor: pointer; overflow: hidden; }
+  .thumb.on { border-color: var(--accent); }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .pdp-info { display: flex; flex-direction: column; gap: 10px; }
+  .pdp-info h1 { margin: 0; }
+  .pdp-info p { margin: 0; }
+  .fitbox { padding: 10px 12px; border-radius: 8px; font-weight: 600; }
+  .fitbox.ok { background: var(--ok-bg); color: var(--ok); }
+  .fitbox.no { background: var(--no-bg); color: var(--no); }
+  .fits { font-size: .92rem; }
+  .buy { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 0; }
+  .notes { background: var(--warn-bg); color: var(--warn-text); border-radius: 10px; padding: 12px 14px; font-size: .9rem; }
+  .notes ul { margin: 6px 0 0; padding-left: 18px; }
+  .notes li { margin: 3px 0; }
+  .jump { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; }
+  .jump button { font: inherit; font-size: .85rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+  .psec { margin-top: 36px; scroll-margin-top: 80px; }
+  .psec h2 { font-size: 1.2rem; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .psec h3 { font-size: 1rem; margin: 18px 0 6px; }
+  .specs { columns: 2 320px; column-gap: 32px; margin: 0; padding-left: 18px; }
+  .specs > li { break-inside: avoid; margin: 0 0 6px; }
+  .specs ul { margin: 2px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
+  .dl-row { display: grid; gap: 10px; margin-bottom: 12px; }
+  .dl { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+  .dl-btns { display: flex; gap: 8px; }
+  .videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .video { position: relative; display: block; border-radius: 10px; overflow: hidden; text-decoration: none; }
+  .video img { width: 100%; display: block; aspect-ratio: 16 / 9; object-fit: cover; }
+  .video span { position: absolute; left: 10px; bottom: 10px; background: rgba(0,0,0,.75); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: .85rem; font-weight: 600; }
+  .source { margin-top: 32px; }
+
+  /* faq + firmware */
+  details.faq, details.fw { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-top: 8px; }
+  details.fw { border-left: 4px solid var(--line); }
+  details.faq summary, details.fw summary { cursor: pointer; padding: 12px 16px; font-weight: 600; }
   details.faq summary .tag { font-weight: 600; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-left: 6px; }
-  details.faq .faq-body { padding: 0 16px 14px; font-size: .92rem; }
-  details.faq .faq-body p { margin: 0 0 6px; }
-  details.faq .faq-body ol { margin: 4px 0 6px; padding-left: 20px; }
-  details.faq:target { outline: 3px solid var(--accent); }
-  #firmware { margin-top: 40px; }
-  #firmware > h2 { font-size: 1.25rem; }
-  details.fw {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--line);
-    border-radius: 10px;
-    margin-top: 10px;
-  }
-  details.fw summary { cursor: pointer; padding: 14px 16px; font-weight: 600; }
   details.fw summary small { font-weight: 400; color: var(--muted); }
-  .fw-body { padding: 0 16px 16px; }
-  .fw-body h4 { margin: 14px 0 6px; font-size: .95rem; }
-  .fw-body ol { margin: 0; padding-left: 20px; }
-  .fw-body li { margin: 2px 0; }
+  .faq-body, .fw-body { padding: 0 16px 14px; font-size: .92rem; }
+  .faq-body p { margin: 0 0 6px; }
+  .faq-body ol, .fw-body ol { margin: 4px 0 6px; padding-left: 20px; }
+  .fw-body h4 { margin: 14px 0 4px; font-size: .95rem; }
   .fw-dl { display: inline-block; margin: 2px 0 6px; font-weight: 600; }
   .ver { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
-  .src { font-size: .85rem; color: var(--muted); margin-top: 12px; }
-  [hidden] { display: none !important; }
-
-  @media (max-width: 640px) {
-    .selects { grid-template-columns: 1fr 1fr; }
-    .selects > div:first-child { grid-column: 1 / -1; }
-    .reset { grid-column: 1 / -1; }
-  }
 </style>
 </head>
 <body>
-<header>
+<header class="top">
   <div class="wrap">
-    <h1>Linkswell Radio Install Guides</h1>
-    <p>T-Style XL · Gen 6 · Lite 2: manuals, fitment and firmware</p>
+    <a class="brand" href="#/">Linkswell Install Guides</a>
+    <nav class="topnav">
+      <a href="#/shop" data-nav="shop">Radios</a>
+      <a href="#/shop?cat=accessories" data-nav="acc">Accessories</a>
+      <a href="#/support" data-nav="support">Support</a>
+    </nav>
+    <form id="topsearch" role="search">
+      <input id="topq" type="search" placeholder="Search vehicles, models or part numbers" aria-label="Search">
+    </form>
   </div>
 </header>
-
-<div class="wrap" style="padding: 0 16px;">
-  <div class="finder">
-    <h2>Find by vehicle</h2>
-    <div class="selects">
-      <div><label for="make">Make</label><select id="make"></select></div>
-      <div><label for="model">Model</label><select id="model" disabled></select></div>
-      <div><label for="year">Year</label><select id="year" disabled></select></div>
-      <button class="reset" id="reset" type="button">Clear</button>
-    </div>
-    <div class="row2">
-      <input class="search" id="q" type="search" placeholder="Or search, e.g. Tacoma, Super Duty, Ram 2019" aria-label="Search">
-      <div class="chips" id="chips" role="group" aria-label="Filter by product line"></div>
-    </div>
-  </div>
-</div>
-
-<main class="wrap">
-  <p class="summary" id="summary"></p>
-  <div id="list"></div>
-
-  <section id="accessories">
-    <h2>Accessories</h2>
-    <p id="accsummary"></p>
-    <div class="grid" id="acclist"></div>
-  </section>
-
-  <section id="faqs">
-    <h2>FAQs</h2>
-    <p id="faqsummary"></p>
-    <div id="faqlist"></div>
-  </section>
-
-  <section id="firmware">
-    <h2>Firmware updates</h2>
-    <div id="fwlist"></div>
-  </section>
-</main>
-
-<script>
-  const LINES = [
-    { id: "xl",    name: "T-Style XL", folder: "t-style-xl",   color: "var(--xl)" },
-    { id: "gen6",  name: "Gen 6",      folder: "gen6-t-style", color: "var(--gen6)" },
-    { id: "lite2", name: "Lite 2",     folder: "lite-2",       color: "var(--lite2)" },
-  ];
-
-  const RAM_OLD = "Ram (2013–18 body / Classic)";
-  const RAM_NEW = "Ram (2019+ new body)";
-  const SITE = "https://www.linkswellinc.com/product/";
-
-  // Product list from linkswellinc.com (Nov 2026). fits: [make, model, firstYear, lastYear]
-  const PRODUCTS = [
-    // T-Style XL
-    { line: "xl", title: "2013–2018 Ram (incl. 2019–2024 Classic)", fits: [["Ram", RAM_OLD, 2013, 2024]],
-      manual: "13-18 Ram XL Radio.pdf", fw: "gen6xl", url: "2013-2018-2019-2024-classic-dodge-ram-t-style-xl-radio/" },
-    { line: "xl", title: "2014–2018 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]],
-      manual: "Silverado T-Style XL.pdf", fw: "gen6xl", url: "2014-2018-chevy-silverado-gmc-sierra-t-style-xl-radio/" },
-    { line: "xl", title: "2015–2020 Tahoe / Suburban / Yukon / Denali", fits: [["Chevrolet", "Tahoe", 2015, 2020], ["Chevrolet", "Suburban", 2015, 2020], ["GMC", "Yukon / Yukon Denali", 2015, 2020]],
-      manual: null, fw: "gen6xl", url: "2015-2020-tahoe-suburban-gmc-yukon-denali-t-style-xl-radio/" },
-    { line: "xl", title: "2015–2020 Ford F-150 · 2017–2022 Super Duty", fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2022]],
-      manual: "F-Series XL Radio.pdf", fw: "gen6xl", url: "2015-2020-ford-f-150-2017-2022-super-duty-t-style-xl/" },
-    { line: "xl", title: "2018–2022 Ford Expedition", fits: [["Ford", "Expedition", 2018, 2022]],
-      manual: "Expedition Xl Radio.pdf", fw: "gen6xl", url: "2018-2022-ford-expedition-t-style-xl/",
-      note: "Manual cover lists 2019–2020 only." },
-    { line: "xl", title: "2018–2023 Jeep Wrangler JL · Gladiator JT", fits: [["Jeep", "Wrangler JL", 2018, 2023], ["Jeep", "Gladiator JT", 2020, 2023]],
-      manual: "Jeep XL Radio.pdf", fw: "gen6xl", url: "2018-2023-jeep-wrangler-jl-gladiator-jt-t-style-xl-radio/" },
-    { line: "xl", title: "2019–2023 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2019, 2023], ["GMC", "Sierra", 2019, 2023]],
-      manual: null, fw: "gm19xl", url: "2019-2023_chevy_silverado_gmc_sierra-t-style-xl-radio/",
-      note: "Uses its own firmware, not the Gen 6/XL update." },
-    { line: "xl", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
-      manual: "19-Up Ram XL Radio.pdf", fw: "gen6xl", url: "2019-2024-dodge-ram-t-style-xl-radio/" },
-    { line: "xl", title: "Universal T-Style XL", fits: [],
-      manual: null, fw: "gen6xl", url: "universal-t-style-xl-radio/" },
-
-    // Gen 6
-    { line: "gen6", title: "2005–2015 Toyota Tacoma", fits: [["Toyota", "Tacoma", 2005, 2015]],
-      manual: null, fw: "gen6xl", url: "2005-2015-toyota-tacoma-6-t-style-radio/" },
-    { line: "gen6", title: "2010–2014 Ford Mustang", fits: [["Ford", "Mustang", 2010, 2014]],
-      manual: null, fw: "gen6xl", url: "2010-2014-ford-mustang-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2013–2014 Ford F-150", fits: [["Ford", "F-150", 2013, 2014]],
-      manual: "13-14 F150 Gen 6 Radio.pdf", fw: "gen6xl", url: "2013-2014-ford-f-150-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2013–2018 Ram, 10\" screen (incl. 2019–2024 Classic)", fits: [["Ram", RAM_OLD, 2013, 2024]],
-      manual: null, fw: "gen6xl", url: "2013-2018-19-24-classic-dodge-ram-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2013–2018 Ram, 12\" screen (incl. 2019–2024 Classic)", fits: [["Ram", RAM_OLD, 2013, 2024]],
-      manual: "13-18 Ram 12\" Gen 6 Radio.pdf", fw: "gen6xl", url: "2013-2018-2019-2024-classic-dodge-ram-12-screen-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2014–2018 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]],
-      manual: "Silverado Gen 6 Radio.pdf", fw: "gen6xl", url: "2014-2018-chevy-silverado-gmc-sierra-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2014–2021 Jeep Grand Cherokee", fits: [["Jeep", "Grand Cherokee", 2014, 2021]],
-      manual: "Grand Cherokee Gen 6 Radio.pdf", fw: "gen6xl", url: "2014-2021-jeep-grand-cherokee-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2014–2022 Toyota Tundra", fits: [["Toyota", "Tundra", 2014, 2022]],
-      manual: "Tundra Gen 6 Radio.pdf", fw: "gen6xl", url: "2014-2022-toyota-tundra-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2015–2020 Ford F-150 · 2017–2023 Super Duty", fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2023]],
-      manual: "F-Series Gen 6 Radio.pdf", fw: "gen6xl", url: "2015-2020-f-150-2017-2023-super-duty-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2015–2023 Ford Mustang", fits: [["Ford", "Mustang", 2015, 2023]],
-      manual: "Mustang Gen 6 Radio.pdf", fw: "gen6xl", url: "2015-2023-ford-mustang-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2016–2023 Toyota Tacoma", fits: [["Toyota", "Tacoma", 2016, 2023]],
-      manual: "Tacoma Gen 6 Radio.pdf", fw: "gen6xl", url: "2016-2023-toyota-tacoma-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2018–2021 Ford Expedition", fits: [["Ford", "Expedition", 2018, 2021]],
-      manual: "Expedition Gen 6 Radio.pdf", fw: "gen6xl", url: "2018-2021-ford-expedition-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2018–2023 Ford Ranger", fits: [["Ford", "Ranger", 2018, 2023]],
-      manual: "Ranger Gen 6 Radio.pdf", fw: "gen6xl", url: "2018-2023-ford-ranger-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2018–2023 Jeep Wrangler JL · Gladiator JT", fits: [["Jeep", "Wrangler JL", 2018, 2023], ["Jeep", "Gladiator JT", 2020, 2023]],
-      manual: "Jeep Wrangler Gen 6 Radio.pdf", fw: "gen6xl", url: "2018-2023-jeep-wrangler-jl-gladiator-jt-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
-      manual: null, fw: "gen6xl", url: "2019-2024-dodge-ram-generation-6-t-style-radio/" },
-    { line: "gen6", title: "2007–2014 Cadillac", fits: [["Cadillac", "2007–2014 models", 2007, 2014]],
-      manual: "Cadillac Gen 6 Radio.pdf", fw: "gen6xl", url: null,
-      note: "Not in LinksWell's current product list." },
-
-    // Lite 2
-    { line: "lite2", title: "2013–2014 Ford F-150", fits: [["Ford", "F-150", 2013, 2014]],
-      manual: null, fw: "lite2", url: "2013-2014-ford-f-150-t-style-lite-2/" },
-    { line: "lite2", title: "2013–2018 Ram", fits: [["Ram", RAM_OLD, 2013, 2018]],
-      manual: "Linkswell-Lite2 18 Ram-Manual.pdf", fw: "lite2", url: "2013-2018-dodge-ram-t-style-lite-2/" },
-    { line: "lite2", title: "2014–2018 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]],
-      manual: "Linkswell-Lite2 14-18-GMC-Manual.pdf", fw: "lite2", url: "2014-2018-sierra-silverado-t-style-lite-2/" },
-    { line: "lite2", title: "2014–2022 Toyota Tundra", fits: [["Toyota", "Tundra", 2014, 2022]],
-      manual: "Linkswell-Lite2 Tundra-Manual.pdf", fw: "lite2", url: "2014-2022-toyota-tundra-t-style-lite-2/" },
-    { line: "lite2", title: "2015–2020 Ford F-150 · 2017–2023 Super Duty", fits: [["Ford", "F-150", 2015, 2020], ["Ford", "Super Duty", 2017, 2023]],
-      manual: "Linkswell-Lite2 F150 Manual.pdf", fw: "lite2", url: "2015-2020-f-150-2017-2023-super-duty-t-style-lite-2/" },
-    { line: "lite2", title: "2015–2023 Ford Mustang", fits: [["Ford", "Mustang", 2015, 2023]],
-      manual: "Linkswell-Lite2 Mustang-Manual.pdf", fw: "lite2", url: "2015-2023-ford-mustang-t-style-lite-2/" },
-    { line: "lite2", title: "2018–2023 Ford Ranger", fits: [["Ford", "Ranger", 2018, 2023]],
-      manual: null, fw: "lite2", url: "2018-2023-ford-ranger-t-style-lite-2/" },
-    { line: "lite2", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
-      manual: "Linkswell-Lite2 19 Ram-Manual.pdf", fw: "lite2", url: "2019-2024-dodge-ram-t-style-lite-2y/" },
-    { line: "lite2", title: "2019–2023 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2019, 2023], ["GMC", "Sierra", 2019, 2023]],
-      manual: null, fw: "lite2", url: "2019-2023-sierra-silverado-t-style-lite-2/" },
-  ];
-
-  // T-Style accessories from linkswellinc.com (Nov 2026).
-  // fits: [] = any vehicle. lines: null = LinksWell doesn't say which T-Style generations.
-  const GM1418 = [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]];
-  const JEEP = [["Jeep", "Wrangler JL", 2018, 2023], ["Jeep", "Gladiator JT", 2020, 2023]];
-  const ACCESSORIES = [
-    { sku: "DGPUPWHARN22", name: "Power Harness Adapter, 2022+ Ram",
-      what: "Replacement main power harness needed to install a new-body Ram T-Style radio in a 2022 or newer Ram.",
-      fits: [["Ram", RAM_NEW, 2022, 2024]], lines: null, required: true,
-      url: "2022-up-power-harness-adapter-for-new-body-ram-t-style-radios/" },
-    { sku: "FDPUSDHARN", name: "Super Duty 2020–22 Adapter (non-B&O)",
-      what: "New main power harness required on 2020–2022 Super Duty trucks without B&O audio.",
-      fits: [["Ford", "Super Duty", 2020, 2022]], lines: null, required: true,
-      note: "Trucks with B&O audio use FDSDBOADPT instead.",
-      url: "ford-superduty-2020-22adapter/" },
-    { sku: "FDPUBOADPT", name: "F-150 B&O Audio Harness Adapter",
-      what: "Replaces the radio's main harness to keep the factory B&O audio. Includes relocation brackets, B&O CAN bus adaptor and T-harness.",
-      fits: [["Ford", "F-150", 2015, 2020]], lines: null,
-      note: "Only for trucks with factory B&O audio.",
-      url: "ford-f-150-bo-audio-harness-adapter/" },
-    { sku: "FDSDBOADPT", name: "Super Duty B&O Audio Harness Adaptor",
-      what: "Replaces the radio's main harness to keep the factory B&O audio. Includes relocation brackets, B&O CAN bus adaptor and T-harness.",
-      fits: [["Ford", "Super Duty", 2017, 2022]], lines: null,
-      note: "Only for trucks with factory B&O audio.",
-      url: "ford-superduty-2017-22-bo-audio-harness-adaptor/" },
-    { sku: "FDPU360ADPT", name: "Ford 360 Camera Retention Adaptor",
-      what: "Keeps the factory 360 camera and its on-screen controls: tailgate zoom, trailer assist, cargo view and brake-light camera.",
-      fits: [["Ford", "F-150", 2018, 2020], ["Ford", "Super Duty", 2018, 2023], ["Ford", "Expedition", 2018, 2022]], lines: null,
-      note: "Only needed when the 360 camera is controlled from the touch screen. If it uses a physical camera button, just turn on the 360 options in the radio settings. Plugs into the 54-pin harness that comes with the radio.",
-      url: "factory-ford-360-camera-retention-adaptor/" },
-    { sku: "TS-FDPUMCADPT", name: "Ford F-Series Multi-Camera Interface",
-      what: "Adds 7 camera inputs (front, rear, left, right, cargo, trailer, aux), triggered by the vehicle's CAN bus and controlled from the touch screen.",
-      fits: [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]], lines: null,
-      note: "LinksWell lists it for its Ford F-Series T-Style radios without giving years.",
-      url: "multi-camera-interface-for-the-linkswell-ford-f-series-t-style-radios/" },
-    { sku: "FDPUACFLTKIT", name: "Ford Fleet Truck Climate Control Adapter",
-      what: "Makes Ford fleet-truck climate controls work with the T-Style radio.",
-      fits: [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]], lines: null,
-      note: "LinksWell says it's for FDED12 radios (e.g. TS-FDED12-4RR). Check the radio's model number. Years aren't listed.",
-      url: "ts-fdpuacfltkit-ford-fleet-truck-climate-control-adapter/" },
-    { sku: "GMPUBSADPT", name: "GM Bose Adaptor",
-      what: "Plug-and-play interface that keeps the factory Bose (MOST) amplifier and its settings.",
-      fits: GM1418, lines: null,
-      note: "Works only with the LinksWell GM T-Style radio.",
-      url: "2014-2018-chevy-silverado-gmc-sierra-bose-adaptor-for-the-t-style-radios/" },
-    { sku: "GMPUUSBHDMI", name: "GM Dual USB / HDMI / AUX Input Panel",
-      what: "Replaces the factory GM USB/SD/AUX hub with 2 USB ports, 1 HDMI port and a 3.5 mm AUX jack with L/R RCA.",
-      fits: GM1418, lines: null,
-      url: "dual-usb-hdmi-aux-input-panel-for-gm/" },
-    { sku: "JP4XEORPADPT-01", name: "Jeep 4xe & Off-Road Page Retention Module",
-      what: "Keeps the 4xe hybrid pages and Max Charge, and keeps or adds the off-road pages.",
-      fits: JEEP, lines: ["gen6", "xl"],
-      note: "LinksWell doesn't list Jeep models or years; shown here for Wrangler JL and Gladiator JT.",
-      url: "jp-4xeorp-adpt-01/" },
-    { sku: "JDCAMADPT19", name: "Jeep / Ram Factory Camera Retention Adapter",
-      what: "Adapts the factory reverse camera (FAKRA) to RCA video, CVBS or AHD, for a universal-style install. May be labeled XSBOX-006.",
-      fits: [...JEEP, ["Jeep", "Grand Cherokee", 2018, 2021], ["Ram", RAM_OLD, 2018, 2023], ["Ram", RAM_NEW, 2019, 2023]], lines: null,
-      note: "LinksWell lists it as “2018–23 Jeep/Dodge” without naming models. Confirm fit.",
-      url: "2018-2020-jeep-dodge-factory-camera-retention-adapter/" },
-    { sku: "LWTSHDMIIN", name: "HDMI Input Adapter",
-      what: "Adds an HDMI input to the radio.",
-      fits: [], lines: ["gen6", "xl"],
-      note: "Only for radios whose model number ends in H or S.",
-      url: "hdmi-input-adapter/" },
-    { sku: "USBDVRCAM", name: "USB DVR Camera",
-      what: "USB dash cam with SD card slot and ADAS alerts: lane departure, collision warning, stop-and-go.",
-      fits: [], lines: null,
-      note: "Needs the DVR ADAS app installed on the radio (see LinksWell's T-Style Apps page).",
-      url: "usb-dvr-camera/" },
-  ];
-
-  // FAQs from linkswellinc.com/faqs (Nov 2026), reworded. LinksWell wrote them for older
-  // T-Style generations; answers only for Gen II–IV or the old settings menu are left out.
-  // fits: [] = every vehicle. kind: "buy" (before you buy) or "fix" (troubleshooting).
-  const FORD_F = [["Ford", "F-150", 2013, 2020], ["Ford", "Super Duty", 2017, 2023]];
-  const GM_T = [["Chevrolet", "Silverado", 2014, 2018], ["GMC", "Sierra", 2014, 2018]];
-  const RAM_T = [["Ram", RAM_OLD, 2013, 2024]];
-  const TUNDRA = [["Toyota", "Tundra", 2014, 2022]];
-  const CLIMATE_GUIDE = {
-    ford: "https://www.dropbox.com/sh/p13kx17mexnkrrd/AAAJ46dpdY5KYkH-waWYZIx7a?dl=0",
-    gm: "https://www.dropbox.com/sh/s7bk2l1pp702m79/AADnOFusQaGRsgMEXeNvmByfa?dl=0",
-    ramTundra: "https://www.dropbox.com/sh/rum1uw97lmeqgos/AADTF5DaEO9I9OPe_PPcyoB_a?dl=0",
-  };
-  const RIGHT_CAM_STEPS = ["Settings → System (top right) → Factory settings → enter 1660 → OK.", "Install Set (left side) → turn off “Switch to Right Camera when turn signal is detected”.", "Save and Reboot."];
-  const SEAT_STEPS = ["Settings → System (top right) → Setting Guide → Seat & Steering Wheel.", "Turn on the options the truck has → OK.", "Save and Reboot."];
-
-  const FAQS = [
-    // every vehicle
-    { id: "clock", kind: "fix", fits: [], q: "The clock resets every time the vehicle restarts",
-      a: "The radio gets the time from more than one source. Set it by hand:",
-      steps: ["Settings → Android settings (More Settings at the top, or System at top right) → System → Date and time.", "Turn off automatic date & time and automatic time zone.", "Set the time zone, then the time."] },
-    { id: "nosignal", kind: "fix", fits: [], q: "Screen goes black and says NO SIGNAL with the right turn signal on",
-      a: "The radio is set to switch to an aftermarket right-side camera. Turn that off:", steps: RIGHT_CAM_STEPS },
-    { id: "btcall", kind: "fix", fits: [], q: "The phone screen can't be minimized during a call",
-      a: "That's an Android limitation: the Bluetooth app has to stay in front or the call drops. Navigation can run in the background; calls can't." },
-    { id: "seats", kind: "fix", fits: [...FORD_F, ...RAM_T], q: "Heated/cooled seat or heated wheel buttons are missing",
-      a: "Turn on the options the truck has:", steps: SEAT_STEPS },
-    { id: "iphone", kind: "buy", fits: [], q: "Does the radio work with an iPhone?",
-      a: "Yes. The radio runs Android, but Bluetooth and PhoneLink work normally with iPhones." },
-    { id: "swc", kind: "buy", fits: [], q: "Are steering wheel controls and SiriusXM kept?",
-      a: "Steering wheel controls are kept except the voice-command button. SiriusXM satellite radio and the factory microphone are not kept; customers can stream SiriusXM from their phone or the radio instead." },
-
-    // Ford F-Series
-    { id: "f-lose", kind: "buy", fits: FORD_F, q: "F-Series: what factory features are lost?",
-      a: "SiriusXM satellite radio, SYNC and FordPass, the Rapid-Heat supplemental cab heater, and the factory microphone." },
-    { id: "f-keep", kind: "buy", fits: FORD_F, q: "F-Series: what comfort features still work?",
-      a: "Heated, cooled and massage seats, the heated steering wheel and ambient lighting controls. Climate control moves to the touch screen." },
-    { id: "f-adapters", kind: "buy", fits: FORD_F, q: "F-Series: are extra adapters needed?",
-      a: "Possibly. Trucks with B&O audio or a touch-screen 360 camera need adapters, and 2020+ Super Duty trucks need a harness adapter. Factory navigation is not kept.",
-      acc: ["FDPUBOADPT", "FDSDBOADPT", "FDPU360ADPT", "FDPUSDHARN"] },
-    { id: "f-holes", kind: "buy", fits: FORD_F, q: "F-Series: the truck has two button holes above the screen, the radio has three",
-      a: "That's fine. The radio ships with three blank plates, so it fits trucks with two or three holes." },
-    { id: "f-remote", kind: "fix", fits: FORD_F, q: "F-Series: AC runs at full fan on remote start",
-      a: "Change it in the truck's instrument cluster, not the radio:",
-      steps: ["Cluster → Settings (far right) → Advanced Settings → Vehicle → Remote Start → Climate.", "Change AUTO to Last Setting."] },
-    { id: "f-temp", kind: "fix", fits: FORD_F, q: "F-Series: driver temperature is reversed (hot blows cold)",
-      a: "The truck has auto/dual-zone AC but the radio is set to manual AC. Set the correct climate type using the Ford climate setup guide.",
-      link: [CLIMATE_GUIDE.ford, "Ford climate setup guide"] },
-    { id: "f-lamp", kind: "fix", fits: FORD_F, q: "F-Series: where are massage seats and ambient lighting?",
-      a: "App list → System App → SEAT (massage) and LAMP (ambient lighting). If LAMP is missing:",
-      steps: ["Settings → System (top right) → Factory settings → enter 1660 → OK.", "Install Set → turn on Ford Lamp.", "Save and Reboot."] },
-    { id: "f-360", kind: "fix", fits: FORD_F, q: "F-Series: the factory 360 camera button doesn't work",
-      a: "Turn on the 360 camera in settings. Trucks whose 360 camera is controlled from the touch screen also need the 360 adaptor.",
-      steps: ["Settings → System (top right) → Setting Guide → Camera.", "Turn on 360 Camera → OK.", "Save and Reboot."], acc: ["FDPU360ADPT"] },
-    { id: "f-tweeter", kind: "fix", fits: FORD_F, q: "F-Series: sound only comes from the dash tweeters",
-      a: "The truck has B&O audio. It needs the B&O adapter, or an aftermarket amplifier for the speakers.",
-      acc: ["FDPUBOADPT", "FDSDBOADPT"] },
-
-    // GM Silverado / Sierra (2014–18 body)
-    { id: "g-2019", kind: "buy", fits: GM_T, q: "GM: does the 2014–18 radio fit a 2019 2500/3500?",
-      a: "Yes. 2019 HD trucks kept the older dash. If the dash matches the 2014–18 shape, the 2014–18 radio fits." },
-    { id: "g-lose", kind: "buy", fits: GM_T, q: "GM: what factory features are lost?",
-      a: "SiriusXM satellite radio, the myChevrolet/myGMC app, the fan turning down during phone calls, factory rear-seat entertainment, and the factory microphone." },
-    { id: "g-adapters", kind: "buy", fits: GM_T, q: "GM: are extra adapters needed?",
-      a: "Trucks with BOSE audio may need the Bose adaptor. Factory navigation is not kept.", acc: ["GMPUBSADPT"] },
-    { id: "g-denali", kind: "buy", fits: GM_T, q: "GM: Denali has brown/pewter trim, not silver",
-      a: "An optional pewter trim set is available to match Denali trim." },
-    { id: "g-buttons", kind: "fix", fits: GM_T, q: "GM: physical climate buttons don't work",
-      a: "Plug the white “TO RADIO” connector on the climate control harness into the back of the radio." },
-    { id: "g-fan", kind: "fix", fits: GM_T, q: "GM: fan speed is backwards (0 blows, 8 stops)",
-      a: "The truck has auto/dual-zone AC but the radio is set to manual AC. Set the correct climate type using the GM climate setup guide.",
-      link: [CLIMATE_GUIDE.gm, "GM climate setup guide"] },
-    { id: "g-wheel", kind: "fix", fits: GM_T, q: "GM: heated steering wheel option is missing",
-      a: "Heated/cooled seats keep their factory buttons. For the heated wheel:", steps: SEAT_STEPS },
-    { id: "g-audio", kind: "fix", fits: GM_T, q: "GM: no audio after install",
-      a: "The truck likely has BOSE audio. It needs the Bose adaptor, or an aftermarket amplifier.", acc: ["GMPUBSADPT"] },
-
-    // Ram (2013–18 body / Classic)
-    { id: "r-lose", kind: "buy", fits: RAM_T, q: "Ram: what factory features are lost?",
-      a: "SiriusXM satellite radio, air-ride settings on the touch screen (LinksWell says an update is planned), Ram's built-in truck Wi-Fi, and the factory microphone. Climate control moves to the touch screen." },
-    { id: "r-hazard", kind: "fix", fits: RAM_T, q: "Ram: hazard light button doesn't work",
-      a: "Usually a connection problem:",
-      steps: ["Unplug the main power harness and the red CAN box.", "Check for bent pins or loose wires, then reconnect.", "If it still doesn't work, hold the hazard button for 30–60 seconds."] },
-    { id: "r-climate", kind: "fix", fits: RAM_T, q: "Ram: fan speeds or temperature are wrong",
-      a: "The radio is probably set to the wrong climate type. Use the Ram climate setup guide.",
-      link: [CLIMATE_GUIDE.ramTundra, "Ram/Tundra climate setup guide"] },
-    { id: "r-audio", kind: "fix", fits: RAM_T, q: "Ram: no audio after install",
-      a: "Check the HI/LO audio plug on the main power harness. The white “Dodge Ram Audio Output” connector must go into “Dodge Ram HI Audio” for Alpine systems or “Dodge Ram LO Audio” for standard audio. All three plugs are on the main harness." },
-
-    // Toyota Tundra
-    { id: "t-lose", kind: "buy", fits: TUNDRA, q: "Tundra: what factory features are lost?",
-      a: "Only SiriusXM satellite radio and the factory microphone. Heated/cooled seats still work." },
-    { id: "t-buttons", kind: "fix", fits: TUNDRA, q: "Tundra: physical climate buttons don't work",
-      a: "Plug the white “TO RADIO” connector on the climate control harness into the back of the radio." },
-    { id: "t-climate", kind: "fix", fits: TUNDRA, q: "Tundra: fan speeds or temperature are wrong",
-      a: "The radio is probably set to the wrong climate type. Use the climate setup guide (LinksWell links the same guide for Ram and Tundra).",
-      link: [CLIMATE_GUIDE.ramTundra, "Ram/Tundra climate setup guide"] },
-    { id: "t-seats", kind: "fix", fits: TUNDRA, q: "Tundra: heated/cooled seat options are missing",
-      a: "First set the climate type to “TUNDRA HI W/ Seat Heaters”. Then:", steps: SEAT_STEPS },
-    { id: "t-srs", kind: "fix", fits: TUNDRA, q: "Tundra: SRS airbag light after install",
-      a: "Very common. Check every main harness plug for bent pins, and make sure the Emergency Light plug on the main harness is connected to the matching plug on the climate control connector." },
-    { id: "t-audio", kind: "fix", fits: TUNDRA, q: "Tundra: no audio after install",
-      a: "Check every main harness plug for bent pins. On JBL systems that won't turn on, check the climate setup, then call LinksWell: it can be several things." },
-  ];
-
-  // Firmware as posted on linkswellinc.com support pages
-  const FIRMWARE = [
-    { id: "gen6xl", name: "Gen 6 & T-Style XL", color: "var(--xl)", asOf: "LinksWell page dated 08/03/2026",
-      src: "https://www.linkswellinc.com/gen-6-xl-t-style-radio-firmware-updates/",
-      intro: "Update the APP and the MCU as two separate updates. Use a USB drive of 32 GB or smaller, formatted FAT32. Download each file directly; a copied file may not be recognized.",
-      parts: [
-        { h: "1. APP update", ver: "2025-10-23", file: "update_e.zip",
-          href: "https://www.dropbox.com/scl/fi/vv0ydstdszktigcwapuh4/update_e.zip?rlkey=e3e6zdsjwjlzgtrna08ahsjmi&dl=0",
-          steps: ["Copy update_e.zip (still zipped) to the root of an empty FAT32 USB drive.",
-                  "Start the vehicle and let the radio boot. Remove any other USB devices.",
-                  "Plug in the USB drive and press Yes when the update prompt appears.",
-                  "Let the radio reboot completely."] },
-        { h: "2. MCU update", ver: "F059MV", file: "RL9A.bin",
-          href: "https://www.dropbox.com/scl/fi/rular7lteeodeez88f9m3/RL9A.bin?rlkey=phtnrfa308cn80nnj8c0u5gzk&dl=0",
-          steps: ["Reformat the USB drive to FAT32 and copy RL9A.bin to it.",
-                  "With the vehicle on, plug in the USB drive.",
-                  "Settings → System → Factory settings → enter 1660 → OK → Upgrade → MCU → OK.",
-                  "After the reboot, the MCU version should end in F059MV."] },
-      ] },
-    { id: "gm19xl", name: "T-Style XL, 2019+ Silverado / Sierra", color: "var(--xl)", asOf: "LinksWell page dated 10/02/2026",
-      src: "https://www.linkswellinc.com/2019-gm-silverado-sierra-xl-t-style-radio-firmware-updates/",
-      intro: "This radio uses its own firmware. Note: the USB drive must be formatted NTFS for the APP/MCU update, not FAT32. The Work Truck trim uses a different CAN box file.",
-      parts: [
-        { h: "1. APP / MCU update", ver: "July 30 2026", file: "APP Update folder",
-          href: "https://www.dropbox.com/scl/fo/zhi3n25l4prrtyezsf0cs/ABmp6SL25fjnm1yuYubtkdA?rlkey=sb1hm3mflp5wwmvbuzkswagc6&dl=0",
-          steps: ["Format the USB drive NTFS. Unzip the download and copy all files and the folder to the root.",
-                  "Start the truck, let the radio boot, remove other USB devices, then plug in the drive.",
-                  "Press Yes at the update prompt.",
-                  "When it says “Unplug the USB Disk”, remove the drive and let it reboot completely."] },
-        { h: "2a. CAN box update (standard trims)", ver: "GM-SS-10 V3.02.010BYPJ", file: "simplecanupdate.bin",
-          href: "https://www.dropbox.com/scl/fi/m3ptlkdjwu446ex08qt8h/simplecanupdate.bin?rlkey=06208woofld59ifju50z5u9nw&dl=0",
-          steps: ["Fixes 360-camera issues (2026-07-14). Follow LinksWell's CAN box video below."] },
-        { h: "2b. CAN box update (Work Truck)", ver: "RP1-GM-004 V1.01.100BYPS", file: "simplecanupdate.bin",
-          href: "https://www.dropbox.com/scl/fi/b446vw7h4kwu1a8ui4tnz/simplecanupdate.bin?rlkey=e30zebm7bxgzps0camhza38dp&dl=0",
-          steps: ["Same file name as the standard version, so keep them in separate places."] },
-        { h: "How-to video: CAN box update", ver: "", file: "How-to-update-the-can-box.mp4",
-          href: "https://www.dropbox.com/scl/fi/4nxr35qkfld8oq4a64rwf/How-to-update-the-can-box.mp4?rlkey=biu2zj2gptg3uoy2n1incbfel&dl=0",
-          steps: [] },
-        { h: "3. CANBUS app (APK)", ver: "v3.10.86", file: "CANBUS-SPD-6490 APK",
-          href: "https://www.dropbox.com/scl/fi/lt504wosv5c900lx01hw1/CANBUS-SPD-6490_produce_2026_07_14_10_44_v3.10.86_vc176.apk?rlkey=uwjp7jsmxy8duxm2odx1jrrq6&dl=0",
-          steps: ["Copy the APK to a USB drive and plug it into the running radio (no other USB devices).",
-                  "File Manager → ☰ → your USB → tap the APK → allow unknown apps → Install."] },
-      ] },
-    { id: "lite2", name: "Lite 2", color: "var(--lite2)", asOf: "LinksWell page dated 08/03/2026",
-      src: "https://www.linkswellinc.com/lite-2-t-style-radio-firmware-updates/",
-      intro: "Do these in order: MCU first, then the APP, then the boot logo. Use a FAT32 USB drive with each file in the root.",
-      parts: [
-        { h: "1. MCU update", ver: "SO19", file: "RLC0.bin",
-          href: "https://www.dropbox.com/scl/fi/tfbrljj1k1tw72mvm3fr8/RLC0.bin?rlkey=p7o15kthm939p1vg6439kxxj8&dl=0",
-          steps: ["Copy RLC0.bin to the USB drive and plug it in.",
-                  "Gear icon → System → Software version → tap “Device name” 6–7 times.",
-                  "Tap “MCU Upgrade” (a red progress bar appears). The radio reboots on its own.",
-                  "Check that the MCU version ends in SO19."] },
-        { h: "2. APP update", ver: "20260711", file: "update13.zip",
-          href: "https://www.dropbox.com/scl/fi/09vvh61qpupzm9qedyfms/update13.zip?rlkey=13ltzbooyyx1tzk88oehgpir8&dl=0",
-          steps: ["Copy update13.zip to the USB drive and plug it in.",
-                  "Press Upgrade and check that the progress bar is green. If no bar appears, stop and try again.",
-                  "After the reboot, the APP version should start with 20260711."] },
-        { h: "3. Boot logo animation", ver: "", file: "Boot logo folder",
-          href: "https://www.dropbox.com/scl/fo/8kcz2vnzodxmb7d0p1x0f/ACUU3HT2tnRpZ-cFv_l4G0U?rlkey=zdy0cv73zaftemsu53zeje8o5&dl=0",
-          steps: ["Copy both logo files to the USB drive and plug it in.",
-                  "Gear icon → User → Boot animation → Sure.",
-                  "Boot screen → ☰ → your USB → pick the Linkswell logo."] },
-      ] },
-  ];
-
-  const $ = (id) => document.getElementById(id);
-  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  const lineOf = (id) => LINES.find(l => l.id === id);
-  const manualHref = (p) => encodeURI(lineOf(p.line).folder + "/" + p.manual);
-  const fwOf = (id) => FIRMWARE.find(f => f.id === id);
-
-  const state = { make: "", model: "", year: "", line: "all" };
-  const uniq = (a) => [...new Set(a)];
-  const allFits = PRODUCTS.flatMap(p => p.fits);
-
-  function fillSelect(el, placeholder, values) {
-    el.innerHTML = `<option value="">${placeholder}</option>` + values.map(v => `<option>${esc(v)}</option>`).join("");
-    el.disabled = values.length === 0;
-  }
-  function refreshSelects() {
-    fillSelect($("make"), "Any make", uniq(allFits.map(f => f[0])).sort());
-    $("make").value = state.make;
-    const models = state.make ? uniq(allFits.filter(f => f[0] === state.make).map(f => f[1])).sort() : [];
-    fillSelect($("model"), "Any model", models);
-    $("model").value = state.model;
-    let years = [];
-    if (state.make) {
-      allFits.filter(f => f[0] === state.make && (!state.model || f[1] === state.model))
-        .forEach(([, , a, b]) => { for (let y = a; y <= b; y++) years.push(y); });
-    }
-    fillSelect($("year"), "Any year", uniq(years).sort((a, b) => b - a));
-    $("year").value = state.year;
-  }
-
-  function fitsVehicle(p) {
-    if (!state.make) return true;
-    return p.fits.some(([mk, md, a, b]) =>
-      mk === state.make && (!state.model || md === state.model) && (!state.year || (+state.year >= a && +state.year <= b)));
-  }
-  function matchesSearch(p) {
-    const terms = $("q").value.toLowerCase().split(/\s+/).filter(Boolean);
-    if (!terms.length) return true;
-    const years = p.fits.flatMap(([, , a, b]) => Array.from({ length: b - a + 1 }, (_, i) => a + i));
-    const hay = [p.title, lineOf(p.line).name, p.manual || "", ...p.fits.map(f => f[0] + " " + f[1])].join(" ").toLowerCase();
-    return terms.every(t => /^\d{4}$/.test(t) ? years.includes(+t) : hay.includes(t));
-  }
-
-  // does an accessory or FAQ apply to product p, given the current make/model/year?
-  function appliesTo(a, p) {
-    if (a.lines && !a.lines.includes(p.line)) return false;
-    if (!a.fits.length) return true;
-    return a.fits.some(([mk, md, a1, a2]) =>
-      (!state.make || mk === state.make) && (!state.model || md === state.model) &&
-      (!state.year || (+state.year >= a1 && +state.year <= a2)) &&
-      p.fits.some(([pmk, pmd, p1, p2]) => pmk === mk && pmd === md && a1 <= p2 && p1 <= a2));
-  }
-  const accsFor = (p) => ACCESSORIES.filter(a => appliesTo(a, p));
-  const accId = (a) => "acc-" + a.sku.toLowerCase();
-
-  function fitText(a) {
-    if (!a.fits.length) return "Any vehicle";
-    return a.fits.map(([mk, md, y1, y2]) => `${md.startsWith(mk) ? "" : mk + " "}${md} ${y1}–${y2}`).join(" · ");
-  }
-  function linesText(a) {
-    return a.lines ? a.lines.map(id => lineOf(id).name).join(", ") + " only" : "T-Style radios (generations not listed)";
-  }
-
-  function accCard(a) {
-    return `<article class="card acard" id="${accId(a)}">
-      <div class="badge">${a.required ? "Required for some installs" : "Accessory"} · <span class="sku">${esc(a.sku)}</span></div>
-      <h3>${esc(a.name)}</h3>
-      <p>${esc(a.what)}</p>
-      <dl><dt>Fits</dt><dd>${esc(fitText(a))}</dd><dt>Radios</dt><dd>${esc(linesText(a))}</dd></dl>
-      ${a.note ? `<div class="note">${esc(a.note)}</div>` : ""}
-      <div class="links"><a href="${SITE + a.url}" target="_blank" rel="noopener">Product page ↗</a></div>
-    </article>`;
-  }
-
-  function accList(p) {
-    const accs = accsFor(p);
-    if (!accs.length) return "";
-    return `<details class="acc"><summary>Accessories (${accs.length})</summary><ul>${accs.map(a =>
-      `<li><a href="#${accId(a)}">${esc(a.name)}</a> <span class="sku">${esc(a.sku)}</span>${a.required ? " · <strong>required for some installs</strong>" : ""}</li>`).join("")}</ul></details>`;
-  }
-
-  const faqsFor = (p) => FAQS.filter(f => appliesTo(f, p));
-  function faqList(p) {
-    const faqs = faqsFor(p).filter(f => f.fits.length);
-    if (!faqs.length) return "";
-    return `<details class="acc"><summary>FAQs (${faqs.length})</summary><ul>${faqs.map(f =>
-      `<li><a href="#faq-${f.id}" data-faq="${f.id}">${esc(f.q)}</a></li>`).join("")}</ul></details>`;
-  }
-
-  function faqItem(f) {
-    const accLinks = (f.acc || []).map(sku => {
-      const a = ACCESSORIES.find(x => x.sku === sku);
-      return `<a href="#${accId(a)}">${esc(a.name)}</a> <span class="sku">${esc(sku)}</span>`;
-    });
-    return `<details class="faq" id="faq-${f.id}">
-      <summary>${esc(f.q)}<span class="tag">${f.kind === "buy" ? "Before you buy" : "Troubleshooting"}</span></summary>
-      <div class="faq-body">
-        <p>${esc(f.a)}</p>
-        ${f.steps ? `<ol>${f.steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}
-        ${f.link ? `<p><a href="${f.link[0]}" target="_blank" rel="noopener">${esc(f.link[1])} ↗</a></p>` : ""}
-        ${accLinks.length ? `<p>Accessories: ${accLinks.join(" · ")}</p>` : ""}
-      </div>
-    </details>`;
-  }
-
-  function card(p) {
-    const l = lineOf(p.line);
-    const fw = fwOf(p.fw);
-    const manual = p.manual
-      ? `<a class="btn ghost" href="${manualHref(p)}" target="_blank" rel="noopener">View manual</a>
-         <a class="btn primary" href="${manualHref(p)}" download>Download</a>`
-      : `<span class="nomanual">No manual on file. Check <a href="https://www.linkswellinc.com/support/install-user-manuals/" target="_blank" rel="noopener">LinksWell's manuals page</a>.</span>`;
-    return `<article class="card" style="--line:${l.color}">
-      <div class="badge">${esc(l.name)}</div>
-      <h3>${esc(p.title)}</h3>
-      ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
-      <div class="actions">${manual}</div>
-      <div class="links">
-        <a href="#fw-${fw.id}" data-fw="${fw.id}">Firmware: ${esc(fw.name)}</a>
-        ${p.url ? `<a href="${SITE + p.url}" target="_blank" rel="noopener">Product page ↗</a>` : ""}
-      </div>
-      ${accList(p)}
-      ${faqList(p)}
-    </article>`;
-  }
-
-  function render() {
-    const shown = PRODUCTS.filter(p => (state.line === "all" || p.line === state.line) && fitsVehicle(p) && matchesSearch(p));
-    $("list").innerHTML = LINES.map(l => {
-      const items = shown.filter(p => p.line === l.id);
-      if (!items.length) return "";
-      return `<section><h2><span class="dot" style="background:${l.color}"></span>${esc(l.name)}</h2>
-        <div class="grid">${items.map(card).join("")}</div></section>`;
-    }).join("") || `<p class="empty">Nothing from XL, Gen 6 or Lite 2 fits that vehicle.</p>`;
-
-    const accs = ACCESSORIES.filter(a => shown.some(p => appliesTo(a, p)));
-    $("acclist").innerHTML = accs.map(accCard).join("");
-    $("accsummary").textContent = accs.length
-      ? (state.make || state.line !== "all" || $("q").value ? `${accs.length} accessories match the products above.` : `${accs.length} T-Style accessories for XL, Gen 6 and Lite 2.`)
-      : "No accessories match the products above.";
-
-    const faqs = FAQS.filter(f => shown.some(p => appliesTo(f, p)));
-    const groups = [["fix", "Troubleshooting"], ["buy", "Before you buy"]].map(([k, label]) => {
-      const items = faqs.filter(f => f.kind === k);
-      return items.length ? `<h3>${label}</h3>` + items.map(faqItem).join("") : "";
-    }).join("");
-    $("faqlist").innerHTML = groups;
-    $("faqsummary").textContent = "From LinksWell's FAQ pages, which only cover F-Series, GM trucks, Ram and Tundra. Answers written only for older Gen II–IV radios are left out. Settings paths are for the current menu and may differ on Lite 2.";
-
-    const make = state.model.startsWith(state.make) ? "" : state.make;
-    const vehicle = [state.year, make, state.model].filter(Boolean).join(" ");
-    const withManual = shown.filter(p => p.manual).length;
-    $("summary").textContent = shown.length
-      ? `${shown.length} product${shown.length > 1 ? "s" : ""}${vehicle ? " fit " + vehicle : ""} · ${withManual} with a manual`
-      : "";
-  }
-
-  // firmware panels
-  $("fwlist").innerHTML = FIRMWARE.map(f => `
-    <details class="fw" id="fw-${f.id}" style="--line:${f.color}">
-      <summary>${esc(f.name)} <small>· ${esc(f.asOf)}</small></summary>
-      <div class="fw-body">
-        <p>${esc(f.intro)}</p>
-        ${f.parts.map(pt => `
-          <h4>${esc(pt.h)}${pt.ver ? ` <span class="ver">${esc(pt.ver)}</span>` : ""}</h4>
-          <a class="fw-dl" href="${pt.href}" target="_blank" rel="noopener">Download ${esc(pt.file)} ↗</a>
-          ${pt.steps.length ? `<ol>${pt.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}`).join("")}
-        <p class="src">Always check <a href="${f.src}" target="_blank" rel="noopener">LinksWell's firmware page</a> for newer versions before updating.</p>
-      </div>
-    </details>`).join("");
-
-  document.addEventListener("click", (e) => {
-    const f = e.target.closest("a[data-faq]");
-    if (f) { $("faq-" + f.dataset.faq).open = true; return; }
-    const a = e.target.closest("a[data-fw]");
-    if (!a) return;
-    const d = $("fw-" + a.dataset.fw);
-    d.open = true;
-  });
-
-  // product line chips
-  [{ id: "all", name: "All" }, ...LINES].forEach(l => {
-    const b = document.createElement("button");
-    b.className = "chip";
-    b.type = "button";
-    b.textContent = l.name;
-    b.dataset.line = l.id;
-    b.setAttribute("aria-pressed", l.id === "all");
-    b.onclick = () => {
-      state.line = l.id;
-      $("chips").querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.line === l.id));
-      render();
-    };
-    $("chips").appendChild(b);
-  });
-
-  $("make").onchange = (e) => { state.make = e.target.value; state.model = ""; state.year = ""; refreshSelects(); render(); };
-  $("model").onchange = (e) => { state.model = e.target.value; state.year = ""; refreshSelects(); render(); };
-  $("year").onchange = (e) => { state.year = e.target.value; render(); };
-  $("q").addEventListener("input", render);
-  $("reset").onclick = () => {
-    Object.assign(state, { make: "", model: "", year: "" });
-    $("q").value = "";
-    refreshSelects(); render();
-  };
-
-  refreshSelects();
-  render();
-</script>
+<main class="wrap" id="app"></main>
+<script src="data.js"></script>
+<script src="catalog.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
