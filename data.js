@@ -31,7 +31,8 @@ const PRODUCTS = [
   { line: "xl", title: "2019–2024 Ram", fits: [["Ram", RAM_NEW, 2019, 2024]],
     manual: "19-Up Ram XL Radio.pdf", fw: "gen6xl", url: "2019-2024-dodge-ram-t-style-xl-radio/", bb: "6695610", vpn: "XL-DGPU15-6RR-6H" },
   { line: "xl", title: "Universal T-Style XL", fits: [],
-    manual: null, fw: "gen6xl", url: "universal-t-style-xl-radio/", bb: "6695623", vpn: "XL-UNIV15-6RR-6H" },
+    manual: null, fw: "gen6xl", url: "universal-t-style-xl-radio/", bb: "6695623", vpn: "XL-UNIV15-6RR-6H",
+    note: "Per ExtremeTerrain, which sells this radio as a Bronco option: about 2 hours to install, light to moderate skill, some adaptation may be needed. Their box contents list the HDMI input adapter (LW-TSHMDI-IN) as included, while LinksWell lists it as a separate part, so check the box before ordering one." },
 
   // Gen 6
   { line: "gen6", title: "2005–2015 Toyota Tacoma", fits: [["Toyota", "Tacoma", 2005, 2015]],
@@ -72,7 +73,7 @@ const PRODUCTS = [
 
   { line: "gen6", title: "2021+ Ford Bronco", fits: [["Ford", "Bronco", 2021, 2026]],
     manual: null, fw: "gen6xl", url: null, bb: "6695612", vpn: "TS-FDBR13-0-RR-6H", slug: "gen6-ford-bronco-2021-up",
-    note: "Best Buy lists this as “20-up”; the current Bronco started with the 2021 model year. LinksWell has no product page for it yet, so there are no photos, specs or manual." },
+    note: "Best Buy lists this as “20-up”; the current Bronco started with the 2021 model year. LinksWell has no product page for it yet, so there are no photos, specs or manual. ExtremeTerrain also sells the Universal XL (XL-UNIV15-6RR-6H, Best Buy 6695623) as a Bronco install." },
   { line: "gen6", title: "2019–2023 Chevy Silverado / GMC Sierra", fits: [["Chevrolet", "Silverado", 2019, 2023], ["GMC", "Sierra", 2019, 2023]],
     manual: null, fw: null, url: null, bb: "6695618", vpn: "TS-GMP212-1RR-6H", slug: "gen6-gm-silverado-sierra-2019-2023",
     note: "LinksWell has no product page for this radio yet, so there are no photos, specs, manual or firmware listed. The 2019+ GM XL uses its own firmware, so ask LinksWell which update this one takes." },
