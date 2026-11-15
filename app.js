@@ -181,7 +181,7 @@ function viewHome() {
   const lineImg = { xl: "2015-2020-ford-f-150-2017-2022-super-duty-t-style-xl", gen6: "2015-2020-f-150-2017-2023-super-duty-generation-6-t-style-radio", lite2: "2015-2020-f-150-2017-2023-super-duty-t-style-lite-2" };
   app().innerHTML = `
     <section class="hero">
-      <h1>What vehicle are you working on?</h1>
+      <h1>Select your vehicle</h1>
       <form class="vbar" id="homeform">
         ${vehicleSelects(v, "h")}
         <button class="btn primary" type="submit">Show radios</button>
