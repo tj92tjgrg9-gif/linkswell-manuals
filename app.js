@@ -21,6 +21,7 @@ for (let i = PRODUCTS.length - 1; i >= 0; i--) if (PRODUCTS[i].hidden) PRODUCTS.
 PRODUCTS.forEach(p => {
   p.slug = p.slug || p.url.replace(/\/$/, "");
   p.cat = CATALOG[p.slug] || { images: [], specs: [], notes: [], videos: [], model: "", headline: "" };
+  if (!p.cat.images.length && p.images) p.cat = { ...p.cat, images: p.images };
   const m = (p.cat.headline || p.cat.specs[0]?.t || "").match(/([\d.]+)\s*[″"]/);
   p.screen = m ? m[1] : "";
   p.firstYear = Math.min(...p.fits.map(f => f[2]).concat(9999));
